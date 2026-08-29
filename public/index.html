@@ -149,20 +149,7 @@
           </div>
         </section>
 
-        <!-- SECTION 3: MENDATANG -->
-        <section class="content-section upcoming-section">
-          <div class="section-header">
-            <div class="section-title-wrap">
-              <h2 class="section-title">Mendatang</h2>
-            </div>
-            <span class="section-subtitle">Segera Hadir di Bioskop & Streaming</span>
-          </div>
-          <div class="horizontal-scroll-container" id="upcomingScrollList">
-            <!-- Upcoming Movie Cards rendered by JS -->
-          </div>
-        </section>
-
-        <!-- SECTION 4: KATEGORI -->
+        <!-- SECTION 3: KATEGORI -->
         <section class="content-section category-cards-section">
           <div class="section-header">
             <div class="section-title-wrap">
@@ -208,7 +195,7 @@
           </div>
         </section>
 
-        <!-- SECTION 5: FILM ACTION TERBAIK -->
+        <!-- SECTION 4: FILM ACTION TERBAIK -->
         <section class="content-section">
           <div class="section-header">
             <div class="section-title-wrap">
@@ -220,7 +207,7 @@
           </div>
         </section>
 
-        <!-- SECTION 6: SERIAL TV & DRAMA -->
+        <!-- SECTION 5: SERIAL TV & DRAMA -->
         <section class="content-section">
           <div class="section-header">
             <div class="section-title-wrap">
@@ -447,8 +434,8 @@
             <span>Putar Film</span>
           </button>
 
-          <!-- Embedded Iframe Stream Player with Allow Redirect / Ads -->
-          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture"></iframe>
+          <!-- Embedded Iframe Stream Player with Sandboxing to prevent parent window redirects -->
+          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
         </div>
 
         <!-- Detail Information Content -->
@@ -490,14 +477,17 @@
             </div>
           </div>
 
-          <!-- TV Show Episode Selector (If TV Show) -->
+          <!-- TV Show Season & Large Episode Selector -->
           <div id="detailTvControls" class="tv-episode-section hidden">
             <div class="tv-season-header">
-              <label for="detailSeasonSelect">Pilih Musim (Season):</label>
-              <select id="detailSeasonSelect" class="custom-blue-select"></select>
+              <span class="tv-season-label">Pilih Musim (Season):</span>
+              <div class="custom-season-select-wrapper">
+                <select id="detailSeasonSelect" class="custom-blue-season-select"></select>
+                <svg class="select-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </div>
             </div>
             <div class="episode-list-horizontal" id="detailEpisodeList">
-              <!-- Rendered by JS -->
+              <!-- Rendered by JS with Large Touch Buttons -->
             </div>
           </div>
 

@@ -8,7 +8,7 @@ const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 const TMDB_IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 
-/* SERVER SELECTION MAP - RENAMED TO SERVER 1..6 */
+/* SERVER SELECTION MAP - RENAMED STRICTLY TO SERVER 1..6 */
 const SERVERS = {
   vidsrc: { 
     name: "SERVER 1",
@@ -41,42 +41,6 @@ const SERVERS = {
     tv: "https://www.2embed.cc/embedtv/{id}&s={s}&e={e}" 
   }
 };
-
-/* MOCK UPCOMING MOVIES DATA */
-const MOCK_UPCOMING_MOVIES = [
-  {
-    id: 1022789,
-    title: "Inside Out 2",
-    date: "14 JUN 2026",
-    genre: "Animasi • Komedi",
-    poster: "https://image.tmdb.org/t/p/w500/vpnP19zLqVGlOx1VoY8YeeOi9W5.jpg",
-    reminded: false
-  },
-  {
-    id: 573435,
-    title: "Bad Boys: Ride or Die",
-    date: "20 JUL 2026",
-    genre: "Action • Komedi",
-    poster: "https://image.tmdb.org/t/p/w500/nP6RliHjxH2uUjYqMZioHovLgvu.jpg",
-    reminded: false
-  },
-  {
-    id: 823464,
-    title: "Godzilla x Kong: The New Empire",
-    date: "12 AGU 2026",
-    genre: "Action • Sci-Fi",
-    poster: "https://image.tmdb.org/t/p/w500/b0PlSFdDwbyK0cfOiBZaOfHQfeK.jpg",
-    reminded: false
-  },
-  {
-    id: 653346,
-    title: "Kingdom of the Planet of the Apes",
-    date: "05 SEP 2026",
-    genre: "Sci-Fi • Petualangan",
-    poster: "https://image.tmdb.org/t/p/w500/gKkl37BQuKTanygYQG1pyYgLVgf.jpg",
-    reminded: false
-  }
-];
 
 class RstreamAPI {
   async _fetch(endpoint, params = {}) {
@@ -221,8 +185,7 @@ let state = {
   activeSeason: 1,
   activeEpisode: 1,
   searchHistory: JSON.parse(localStorage.getItem("rstream_search_history") || '["Avatar 3", "Squid Game 2", "Demon Slayer", "Siksa Kubur"]'),
-  favorites: JSON.parse(localStorage.getItem("rstream_favorites") || "[]"),
-  upcomingList: MOCK_UPCOMING_MOVIES
+  favorites: JSON.parse(localStorage.getItem("rstream_favorites") || "[]")
 };
 
 /* DOM ELEMENTS */
@@ -247,7 +210,6 @@ const el = {
   recommendedScrollList: document.getElementById("recommendedScrollList"),
   rankingTabs: document.getElementById("rankingTabs"),
   rankingScrollList: document.getElementById("rankingScrollList"),
-  upcomingScrollList: document.getElementById("upcomingScrollList"),
   categoryCardsGrid: document.getElementById("categoryCardsGrid"),
   actionMoviesList: document.getElementById("actionMoviesList"),
   tvSeriesList: document.getElementById("tvSeriesList"),
@@ -310,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initApp() {
   setupEventListeners();
   renderSearchHistory();
-  renderUpcomingMovies();
 
   try {
     const [trending, movies, tv] = await Promise.all([
@@ -340,6 +301,15 @@ async function initApp() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
+  // Prevent top-level iframe redirects from navigating away from the RSTREAM app
+  window.addEventListener("beforeunload", (e) => {
+    // If inline player is playing, prevent iframe from taking over top window
+    if (el.detailInlinePlayer && !el.detailInlinePlayer.classList.contains("hidden")) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
   // Bottom Navigation
   el.navTabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -348,7 +318,7 @@ function setupEventListeners() {
     });
   });
 
-  // Top Search Input Focus/Click -> Auto Redirect to Search View directly
+  // Top Search Input Focus -> Direct redirect to Search Page
   el.topSearchInput.addEventListener("focus", () => {
     switchView("viewSearch");
     if (el.pageSearchInput) el.pageSearchInput.focus();
@@ -444,7 +414,7 @@ function setupEventListeners() {
     showToast("Komentar terposting!");
   });
 
-  // Server selection (SERVER 1, SERVER 2, etc.)
+  // Server selection (SERVER 1, SERVER 2...)
   el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(p => p.classList.remove("active"));
@@ -641,39 +611,6 @@ function renderRankingCards(items, filter = "all") {
   });
 }
 
-/* RENDER MENDATANG */
-function renderUpcomingMovies() {
-  if (!el.upcomingScrollList) return;
-  el.upcomingScrollList.innerHTML = state.upcomingList.map(item => `
-    <div class="upcoming-card">
-      <div class="upcoming-poster-box">
-        <img src="${item.poster}" alt="${escapeHtml(item.title)}" />
-        <span class="date-tag">${item.date}</span>
-      </div>
-      <div class="upcoming-info">
-        <h4 class="upcoming-title">${escapeHtml(item.title)}</h4>
-        <span class="upcoming-desc">${item.genre}</span>
-      </div>
-      <button class="btn-ingat-saya ${item.reminded ? 'active' : ''}" data-id="${item.id}">
-        <span>${item.reminded ? 'Pengingat Diset' : 'Ingat saya'}</span>
-      </button>
-    </div>
-  `).join("");
-
-  el.upcomingScrollList.querySelectorAll(".btn-ingat-saya").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const id = parseInt(btn.dataset.id);
-      const target = state.upcomingList.find(u => u.id === id);
-      if (target) {
-        target.reminded = !target.reminded;
-        renderUpcomingMovies();
-        showToast(target.reminded ? `Pengingat diset untuk ${target.title}` : "Pengingat dibatalkan.");
-      }
-    });
-  });
-}
-
 /* SEARCH HISTORY CHIPS */
 function renderSearchHistory() {
   if (!el.searchHistoryChips) return;
@@ -811,6 +748,7 @@ function setupTvEpisodeControls(detail) {
   };
 }
 
+/* LARGE TOUCH EPISODE BUTTONS */
 function renderTvEpisodes(count) {
   el.detailEpisodeList.innerHTML = Array.from({ length: count }, (_, i) => i + 1)
     .map(ep => `<button class="ep-btn ${ep === state.activeEpisode ? 'active' : ''}" data-ep="${ep}">Eps ${ep}</button>`)
