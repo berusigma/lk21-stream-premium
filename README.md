@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![RSTREAM Banner](public/assets/previews/preview1.jpg)
+![RSTREAM Banner](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225932_1.jpg)
 
 ### **Aplikasi Streaming Film & Serial TV Sub Indo Modern, Cepat & Lintas Platform (Android, iOS & Web)**
 
@@ -21,14 +21,14 @@
 
 | 🎬 Beranda & Katalog Film | 📺 Pemutar Video & Multi-Server |
 | :---: | :---: |
-| ![Katalog Film](public/assets/previews/preview1.jpg) | ![Video Player](public/assets/previews/preview2.jpg) |
+| ![Katalog Film](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225932_1.jpg) | ![Video Player](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225948_1.jpgg) |
 
 </div>
 
 <div align="center">
 
-### 📱 Tampilan Responsif Smartphone & Tablet
-![Multi-Platform Mockup](public/assets/previews/preview3.jpg)
+### 📱 Tampilan Pencarian Film
+![Multi-Platform Mockup](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-230009_1.jpg)
 
 </div>
 
