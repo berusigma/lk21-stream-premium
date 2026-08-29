@@ -301,15 +301,6 @@ async function initApp() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
-  // Prevent top-level iframe redirects from navigating away from the RSTREAM app
-  window.addEventListener("beforeunload", (e) => {
-    // If inline player is playing, prevent iframe from taking over top window
-    if (el.detailInlinePlayer && !el.detailInlinePlayer.classList.contains("hidden")) {
-      e.preventDefault();
-      e.returnValue = "";
-    }
-  });
-
   // Bottom Navigation
   el.navTabBtns.forEach(btn => {
     btn.addEventListener("click", () => {

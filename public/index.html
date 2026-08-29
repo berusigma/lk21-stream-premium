@@ -434,8 +434,8 @@
             <span>Putar Film</span>
           </button>
 
-          <!-- Embedded Iframe Stream Player with Sandboxing to prevent parent window redirects -->
-          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
+          <!-- Standard iframe with full permissions allowing embedded player scripts & popups without breaking embed requirements -->
+          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope"></iframe>
         </div>
 
         <!-- Detail Information Content -->
