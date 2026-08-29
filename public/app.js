@@ -118,13 +118,13 @@ class RstreamAPI {
       overview: data?.overview || "Film spektakuler dengan alur cerita mendalam dan efek visual mengagumkan yang siap menghibur waktu santai Anda.",
       poster: data?.poster_path ? `${TMDB_IMG}${data.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
       backdrop: data?.backdrop_path ? `${TMDB_IMG_ORIGINAL}${data.backdrop_path}` : "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1000&q=80",
-      seasons: type === "tv" ? (data?.number_of_seasons || 1) : 1,
+      seasons: type === "tv" ? (data?.number_of_seasons || 1) : 0,
       seasonsDetail
     };
   }
 
   async trending() {
-    const page = Math.floor(Math.random() * 4) + 1; // Randomize TMDB page 1..4
+    const page = Math.floor(Math.random() * 4) + 1;
     const data = await this._fetch("/trending/all/week", { page });
     if (!data?.results || data.results.length === 0) return shuffleArray(this._expandedFallbackList());
     return shuffleArray(data.results
@@ -142,7 +142,7 @@ class RstreamAPI {
   }
 
   async popularMovies() {
-    const page = Math.floor(Math.random() * 5) + 1; // Randomize page 1..5
+    const page = Math.floor(Math.random() * 5) + 1;
     const data = await this._fetch("/movie/popular", { page });
     if (!data?.results || data.results.length === 0) return shuffleArray(this._expandedFallbackList("movie"));
     return shuffleArray(data.results.map((r) => ({
@@ -158,7 +158,7 @@ class RstreamAPI {
   }
 
   async popularTV() {
-    const page = Math.floor(Math.random() * 5) + 1; // Randomize page 1..5
+    const page = Math.floor(Math.random() * 5) + 1;
     const data = await this._fetch("/tv/popular", { page });
     if (!data?.results || data.results.length === 0) return shuffleArray(this._expandedFallbackList("tv"));
     return shuffleArray(data.results.map((r) => ({
@@ -263,6 +263,7 @@ const el = {
   btnDetailFav: document.getElementById("btnDetailFav"),
   detailBackdropImg: document.getElementById("detailBackdropImg"),
   btnDetailPlayCover: document.getElementById("btnDetailPlayCover"),
+  btnPlayerFullscreen: document.getElementById("btnPlayerFullscreen"),
   detailInlinePlayer: document.getElementById("detailInlinePlayer"),
   detailTitle: document.getElementById("detailTitle"),
   detailRating: document.getElementById("detailRating"),
@@ -372,6 +373,13 @@ function restoreActivePlayerSession() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
+  // Fullscreen Button Event
+  if (el.btnPlayerFullscreen) {
+    el.btnPlayerFullscreen.addEventListener("click", () => {
+      togglePlayerFullscreen();
+    });
+  }
+
   // Refresh / Shuffle Movies Button
   if (el.btnRefreshHome) {
     el.btnRefreshHome.addEventListener("click", async (e) => {
@@ -521,6 +529,25 @@ function setupEventListeners() {
       }
     });
   });
+}
+
+/* FULLSCREEN TOGGLE METHOD */
+function togglePlayerFullscreen() {
+  const iframe = el.detailInlinePlayer;
+  if (!iframe) return;
+
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  } else {
+    if (iframe.requestFullscreen) {
+      iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) {
+      iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) {
+      iframe.msRequestFullscreen();
+    }
+  }
 }
 
 /* VIEW SWITCHING & DEVICE SPECIFICATION LOADING */
@@ -796,21 +823,25 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
   el.detailYear.textContent = detail.year;
   el.detailCountry.textContent = detail.country;
   el.detailRuntime.textContent = detail.runtime;
-  el.detailTypeBadge.textContent = detail.type.toUpperCase();
+  el.detailTypeBadge.textContent = detail.type === "tv" ? "TV SERIES" : "FILM";
   el.detailOverviewText.textContent = detail.overview;
 
   el.detailGenresList.innerHTML = detail.genres.map(g => `<span class="genre-pill">${g}</span>`).join("");
 
-  // Reset Inline Player
+  // RESET & STOP PLAYER IF ACTIVE
   el.detailInlinePlayer.classList.add("hidden");
-  el.detailInlinePlayer.src = "";
+  el.detailInlinePlayer.src = "about:blank";
+  if (el.btnPlayerFullscreen) el.btnPlayerFullscreen.classList.add("hidden");
   el.btnDetailPlayCover.classList.remove("hidden");
 
+  // SEASON CONTROLS ONLY FOR TV SHOWS (STRICTLY HIDDEN FOR MOVIES)
   if (type === "tv") {
     el.detailTvControls.classList.remove("hidden");
     setupTvEpisodeControls(detail);
   } else {
     el.detailTvControls.classList.add("hidden");
+    el.detailSeasonSelect.innerHTML = "";
+    el.detailEpisodeList.innerHTML = "";
   }
 
   renderPosterCards(el.detailRecommendationsList, shuffleArray(state.trending).slice(0, 6));
@@ -825,15 +856,21 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
   }
 }
 
+/* COMPLETE TEARDOWN AND STOPPING OF PLAYER */
 function closeDetailModal() {
   sessionStorage.removeItem("rstream_active_detail");
   if (window.location.hash.startsWith("#detail-")) {
     history.pushState("", document.title, window.location.pathname + window.location.search);
   }
 
+  // STOP PLAYER IMMEDIATELY
+  el.detailInlinePlayer.src = "about:blank";
+  el.detailInlinePlayer.classList.add("hidden");
+  if (el.btnPlayerFullscreen) el.btnPlayerFullscreen.classList.add("hidden");
+  el.btnDetailPlayCover.classList.remove("hidden");
+
   el.detailModal.classList.add("hidden");
   document.body.style.overflow = "";
-  el.detailInlinePlayer.src = "";
   state.currentDetail = null;
 }
 
@@ -847,6 +884,7 @@ function startInlinePlayer() {
 
   el.detailInlinePlayer.src = streamUrl;
   el.detailInlinePlayer.classList.remove("hidden");
+  if (el.btnPlayerFullscreen) el.btnPlayerFullscreen.classList.remove("hidden");
   el.btnDetailPlayCover.classList.add("hidden");
   saveActivePlayerSession();
   showToast(`Memutar stream: ${title}`);

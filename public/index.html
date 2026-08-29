@@ -434,8 +434,14 @@
             <span>Putar Film</span>
           </button>
 
-          <!-- Standard iframe with full permissions allowing embedded player scripts & popups without breaking embed requirements -->
-          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope"></iframe>
+          <!-- Floating Fullscreen Action Button -->
+          <button id="btnPlayerFullscreen" class="btn-player-fullscreen hidden" title="Layar Penuh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <span>Layar Penuh</span>
+          </button>
+
+          <!-- Standard iframe player with full fullscreen permissions -->
+          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="about:blank" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope"></iframe>
         </div>
 
         <!-- Detail Information Content -->
@@ -477,7 +483,7 @@
             </div>
           </div>
 
-          <!-- TV Show Season & Large Episode Selector -->
+          <!-- TV Show Season & Large Episode Selector (ONLY VISIBLE FOR TV SHOWS) -->
           <div id="detailTvControls" class="tv-episode-section hidden">
             <div class="tv-season-header">
               <span class="tv-season-label">Pilih Musim (Season):</span>
