@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.mysimplestart.app"
+    namespace "com.rstream.app"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.mysimplestart.app"
+        applicationId "com.rstream.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -19,9 +19,9 @@ android {
     signingConfigs {
         release {
             storeFile file('release.keystore')
-            storePassword 'android123'
-            keyAlias 'rysav'
-            keyPassword 'android123'
+            storePassword 'rstream123'
+            keyAlias 'rstream'
+            keyPassword 'rstream123'
         }
     }
     buildTypes {
