@@ -263,7 +263,6 @@ const el = {
   btnDetailFav: document.getElementById("btnDetailFav"),
   detailBackdropImg: document.getElementById("detailBackdropImg"),
   btnDetailPlayCover: document.getElementById("btnDetailPlayCover"),
-  btnPlayerFullscreen: document.getElementById("btnPlayerFullscreen"),
   detailInlinePlayer: document.getElementById("detailInlinePlayer"),
   detailTitle: document.getElementById("detailTitle"),
   detailRating: document.getElementById("detailRating"),
@@ -373,13 +372,6 @@ function restoreActivePlayerSession() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
-  // Fullscreen Button Event
-  if (el.btnPlayerFullscreen) {
-    el.btnPlayerFullscreen.addEventListener("click", () => {
-      togglePlayerFullscreen();
-    });
-  }
-
   // Refresh / Shuffle Movies Button
   if (el.btnRefreshHome) {
     el.btnRefreshHome.addEventListener("click", async (e) => {
@@ -529,25 +521,6 @@ function setupEventListeners() {
       }
     });
   });
-}
-
-/* FULLSCREEN TOGGLE METHOD */
-function togglePlayerFullscreen() {
-  const iframe = el.detailInlinePlayer;
-  if (!iframe) return;
-
-  if (document.fullscreenElement || document.webkitFullscreenElement) {
-    if (document.exitFullscreen) document.exitFullscreen();
-    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-  } else {
-    if (iframe.requestFullscreen) {
-      iframe.requestFullscreen();
-    } else if (iframe.webkitRequestFullscreen) {
-      iframe.webkitRequestFullscreen();
-    } else if (iframe.msRequestFullscreen) {
-      iframe.msRequestFullscreen();
-    }
-  }
 }
 
 /* VIEW SWITCHING & DEVICE SPECIFICATION LOADING */
@@ -831,7 +804,6 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
   // RESET & STOP PLAYER IF ACTIVE
   el.detailInlinePlayer.classList.add("hidden");
   el.detailInlinePlayer.src = "about:blank";
-  if (el.btnPlayerFullscreen) el.btnPlayerFullscreen.classList.add("hidden");
   el.btnDetailPlayCover.classList.remove("hidden");
 
   // SEASON CONTROLS ONLY FOR TV SHOWS (STRICTLY HIDDEN FOR MOVIES)
@@ -866,7 +838,6 @@ function closeDetailModal() {
   // STOP PLAYER IMMEDIATELY
   el.detailInlinePlayer.src = "about:blank";
   el.detailInlinePlayer.classList.add("hidden");
-  if (el.btnPlayerFullscreen) el.btnPlayerFullscreen.classList.add("hidden");
   el.btnDetailPlayCover.classList.remove("hidden");
 
   el.detailModal.classList.add("hidden");
@@ -884,7 +855,6 @@ function startInlinePlayer() {
 
   el.detailInlinePlayer.src = streamUrl;
   el.detailInlinePlayer.classList.remove("hidden");
-  if (el.btnPlayerFullscreen) el.btnPlayerFullscreen.classList.remove("hidden");
   el.btnDetailPlayCover.classList.add("hidden");
   saveActivePlayerSession();
   showToast(`Memutar stream: ${title}`);
