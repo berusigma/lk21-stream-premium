@@ -89,21 +89,28 @@ class RstreamAPI {
       }));
   }
 
+  async getTvSeasonDetails(id, seasonNumber) {
+    return await this._fetch(`/tv/${id}/season/${seasonNumber}`);
+  }
+
   async detail(id, type = "movie") {
     const data = await this._fetch(`/${type}/${id}`);
     const title = data?.title || data?.name || "Film Populer";
     const releaseDate = data?.release_date || data?.first_air_date || "2026";
     const year = releaseDate.split("-")[0] || "2026";
-    const runtime = type === "movie" ? (data?.runtime ? `${data.runtime} min` : "120 min") : "45 min/eps";
+    const runtime = type === "movie" ? (data?.runtime ? `${data.runtime} min` : "120 min") : (data?.episode_run_time?.[0] ? `${data.episode_run_time[0]} min/eps` : "45 min/eps");
     const genres = data?.genres?.map((g) => g.name) || ["Action", "Drama", "Petualangan"];
-    const countryCode = data?.production_countries?.[0]?.iso_3166_1 || "US";
+    const countryCode = data?.production_countries?.[0]?.iso_3166_1 || data?.origin_country?.[0] || "US";
 
     let seasonsDetail = [];
-    if (type === "tv" && data?.seasons) {
-      seasonsDetail = data.seasons.filter(s => s.season_number > 0).map(s => ({
-        seasonNumber: s.season_number,
-        episodeCount: s.episode_count || 10
-      }));
+    if (type === "tv" && data?.seasons && data.seasons.length > 0) {
+      seasonsDetail = data.seasons
+        .filter(s => s.season_number > 0)
+        .map(s => ({
+          seasonNumber: s.season_number,
+          name: s.name || `Season ${s.season_number}`,
+          episodeCount: s.episode_count || 10
+        }));
     }
 
     return {
@@ -118,7 +125,7 @@ class RstreamAPI {
       overview: data?.overview || "Film spektakuler dengan alur cerita mendalam dan efek visual mengagumkan yang siap menghibur waktu santai Anda.",
       poster: data?.poster_path ? `${TMDB_IMG}${data.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
       backdrop: data?.backdrop_path ? `${TMDB_IMG_ORIGINAL}${data.backdrop_path}` : "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1000&q=80",
-      seasons: type === "tv" ? (data?.number_of_seasons || 1) : 0,
+      seasons: type === "tv" ? (data?.number_of_seasons || seasonsDetail.length || 1) : 0,
       seasonsDetail
     };
   }
@@ -809,7 +816,7 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
   // SEASON CONTROLS ONLY FOR TV SHOWS (STRICTLY HIDDEN FOR MOVIES)
   if (type === "tv") {
     el.detailTvControls.classList.remove("hidden");
-    setupTvEpisodeControls(detail);
+    await setupTvEpisodeControls(detail);
   } else {
     el.detailTvControls.classList.add("hidden");
     el.detailSeasonSelect.innerHTML = "";
@@ -860,28 +867,66 @@ function startInlinePlayer() {
   showToast(`Memutar stream: ${title}`);
 }
 
-function setupTvEpisodeControls(detail) {
-  const seasonsCount = detail.seasons || 1;
-  el.detailSeasonSelect.innerHTML = Array.from({ length: seasonsCount }, (_, i) => i + 1)
-    .map(s => `<option value="${s}">Season ${s}</option>`)
-    .join("");
-
-  if (state.activeSeason) {
-    el.detailSeasonSelect.value = state.activeSeason;
+async function setupTvEpisodeControls(detail) {
+  let seasonsDetail = detail.seasonsDetail || [];
+  
+  if (seasonsDetail.length === 0) {
+    const totalSeasons = detail.seasons || 1;
+    seasonsDetail = Array.from({ length: totalSeasons }, (_, i) => ({
+      seasonNumber: i + 1,
+      name: `Season ${i + 1}`,
+      episodeCount: 10
+    }));
   }
 
-  renderTvEpisodes(10);
+  el.detailSeasonSelect.innerHTML = seasonsDetail
+    .map(s => `<option value="${s.seasonNumber}">${s.name || 'Season ' + s.seasonNumber} (${s.episodeCount} Eps)</option>`)
+    .join("");
 
-  el.detailSeasonSelect.onchange = (e) => {
+  const availableSeasons = seasonsDetail.map(s => s.seasonNumber);
+  if (!state.activeSeason || !availableSeasons.includes(state.activeSeason)) {
+    state.activeSeason = availableSeasons[0] || 1;
+  }
+  el.detailSeasonSelect.value = state.activeSeason;
+
+  await updateSeasonEpisodes(detail.id, state.activeSeason, seasonsDetail);
+
+  el.detailSeasonSelect.onchange = async (e) => {
     state.activeSeason = parseInt(e.target.value);
     state.activeEpisode = 1;
     saveActivePlayerSession();
-    renderTvEpisodes(10);
+    await updateSeasonEpisodes(detail.id, state.activeSeason, seasonsDetail);
+    if (!el.detailInlinePlayer.classList.contains("hidden")) {
+      startInlinePlayer();
+    }
   };
+}
+
+async function updateSeasonEpisodes(tvId, seasonNum, seasonsDetail) {
+  let count = 10;
+  const currentSeasonObj = seasonsDetail.find(s => s.seasonNumber === seasonNum);
+  if (currentSeasonObj && currentSeasonObj.episodeCount) {
+    count = currentSeasonObj.episodeCount;
+  }
+
+  try {
+    const seasonData = await api.getTvSeasonDetails(tvId, seasonNum);
+    if (seasonData && seasonData.episodes && seasonData.episodes.length > 0) {
+      count = seasonData.episodes.length;
+    }
+  } catch (err) {
+    console.warn("Could not fetch season episode details from TMDB:", err);
+  }
+
+  renderTvEpisodes(count);
 }
 
 /* LARGE TOUCH EPISODE BUTTONS */
 function renderTvEpisodes(count) {
+  if (state.activeEpisode > count) {
+    state.activeEpisode = 1;
+  }
+
   el.detailEpisodeList.innerHTML = Array.from({ length: count }, (_, i) => i + 1)
     .map(ep => `<button class="ep-btn ${ep === state.activeEpisode ? 'active' : ''}" data-ep="${ep}">Eps ${ep}</button>`)
     .join("");
