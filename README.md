@@ -21,7 +21,7 @@
 
 | 🎬 Beranda & Katalog Film | 📺 Pemutar Video & Multi-Server |
 | :---: | :---: |
-| ![Katalog Film](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225932_1.jpg) | ![Video Player](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225948_1.jpgg) |
+| ![Katalog Film](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225932_1.jpg) | ![Video Player](https://raw.githubusercontent.com/berusigma/lk21-stream-premium/refs/heads/main/public/Screenshot_20260829-225948_1.jpg) |
 
 </div>
 
