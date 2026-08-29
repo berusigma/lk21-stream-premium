@@ -1,6 +1,6 @@
 {
-  "appId": "com.mysimplestart.app",
-  "appName": "Capacitor Starter",
+  "appId": "com.lk21.streampremium",
+  "appName": "LK21 Stream Premium",
   "webDir": "public",
   "plugins": {
     "CapacitorHttp": {

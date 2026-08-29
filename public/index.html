@@ -1,59 +1,383 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Capacitor 7 Starter App</title>
+  <title>LK21 Stream Premium - Nonton Film & TV Series Gratis Sub Indo</title>
+  <meta name="description" content="Aplikasi streaming film dan serial TV gratis sub Indo terbaik dengan tampilan premium, tanpa iklan pop-up, dan server cepat." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div class="app-container">
+  <div id="app" class="app-root">
     
-    <!-- HEADER -->
-    <header class="app-header">
-      <div class="logo-box">
-        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </svg>
-      </div>
-      <div>
-        <h1 class="app-title">CAPACITOR 7 STARTER</h1>
-        <p class="app-subtitle">Hybrid Android Template Ready for GitHub Actions</p>
+    <!-- GLASSMORPHIC NAVBAR -->
+    <header class="navbar" id="navbar">
+      <div class="navbar-container">
+        <!-- Logo -->
+        <a href="#" class="brand-logo" id="brandLogo">
+          <div class="logo-icon-wrap">
+            <svg class="logo-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3L19 12L5 21V3Z" fill="url(#logo-grad)" stroke="url(#logo-grad)" stroke-width="2" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="logo-grad" x1="5" y1="3" x2="19" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#0284c7"/>
+                  <stop offset="1" stop-color="#2563eb"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">LK21 <span class="highlight">STREAM</span></span>
+            <span class="brand-badge">PREMIUM</span>
+          </div>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="search-box-wrapper">
+          <div class="search-input-group">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Cari judul film, serial TV, anime..." autocomplete="off" />
+            <button id="btnClearSearch" class="btn-clear-search hidden">&times;</button>
+          </div>
+          <!-- Live Autocomplete Popover -->
+          <div id="searchDropdown" class="search-dropdown hidden"></div>
+        </div>
+
+        <!-- Quick Nav Actions -->
+        <nav class="nav-links">
+          <button id="navBtnTrending" class="nav-item active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"></path></svg>
+            <span>Trending</span>
+          </button>
+          <button id="navBtnMovies" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+            <span>Film</span>
+          </button>
+          <button id="navBtnTV" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+            <span>Serial TV</span>
+          </button>
+          <button id="navBtnFav" class="nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Favorit</span>
+            <span id="favBadge" class="fav-badge">0</span>
+          </button>
+        </nav>
       </div>
     </header>
 
-    <!-- CONTENT CARD -->
-    <main class="card-container">
-      <div class="status-banner">
-        <span class="status-dot"></span>
-        <span>Aplikasi Siap Digunakan!</span>
+    <!-- HERO CAROUSEL BANNER -->
+    <section class="hero-section" id="heroSection">
+      <div class="hero-backdrop" id="heroBackdrop"></div>
+      <div class="hero-gradient-overlay"></div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-pill-badge">
+            <span class="pulse-dot"></span>
+            <span id="heroPillText">🔥 #1 TRENDING MINGGU INI</span>
+          </div>
+          <h1 id="heroTitle" class="hero-title">Memuat Featured Film...</h1>
+          <div class="hero-meta">
+            <span id="heroRating" class="rating-badge">⭐ 8.5</span>
+            <span id="heroYear" class="meta-tag">2026</span>
+            <span id="heroType" class="type-tag">MOVIE</span>
+            <span id="heroGenres" class="genre-tags">Action • Sci-Fi</span>
+          </div>
+          <p id="heroOverview" class="hero-overview">
+            Mengambil data trending terkini dari TMDB...
+          </p>
+          <div class="hero-actions">
+            <button id="btnHeroPlay" class="btn btn-primary btn-hero">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <span>Nonton Sekarang</span>
+            </button>
+            <button id="btnHeroDetail" class="btn btn-secondary btn-hero">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Detail Film</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Hero Carousel Indicators -->
+      <div class="hero-indicators" id="heroIndicators"></div>
+    </section>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-content">
+      
+      <!-- CATEGORY / GENRE FILTER BAR -->
+      <div class="filter-bar-wrapper">
+        <div class="filter-bar" id="genreFilterBar">
+          <button class="filter-pill active" data-genre="all">🔥 Semua</button>
+          <button class="filter-pill" data-genre="movie">🎬 Film</button>
+          <button class="filter-pill" data-genre="tv">📺 Serial TV</button>
+          <button class="filter-pill" data-genre="28">💥 Action</button>
+          <button class="filter-pill" data-genre="35">🤡 Komedi</button>
+          <button class="filter-pill" data-genre="18">🎭 Drama</button>
+          <button class="filter-pill" data-genre="27">👻 Horror</button>
+          <button class="filter-pill" data-genre="878">🚀 Sci-Fi</button>
+          <button class="filter-pill" data-genre="10749">🍿 Romance</button>
+          <button class="filter-pill" data-genre="9648">🕵️ Misteri</button>
+          <button class="filter-pill" data-genre="16">🎨 Animasi</button>
+          <button class="filter-pill" data-genre="53">⚡ Thriller</button>
+        </div>
       </div>
 
-      <p class="intro-text">
-        Ini adalah starter template kosongan Capacitor 7. Edit file di folder <code>public/</code> untuk mulai membuat aplikasi Anda.
-      </p>
+      <!-- SEARCH & FILTER RESULTS SECTION (Hidden by default) -->
+      <section id="searchResultsSection" class="content-section hidden">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2 id="searchResultsTitle" class="section-title">Hasil Pencarian</h2>
+            <span id="searchResultsCount" class="section-count">0 Ditemukan</span>
+          </div>
+          <button id="btnCloseSearchSection" class="btn-text">&times; Tutup Hasil</button>
+        </div>
+        <div id="searchResultsGrid" class="media-grid"></div>
+      </section>
 
-      <!-- TEST BUTTONS -->
-      <div class="button-group">
-        <button id="btnHapticTest" class="btn-primary">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-          Tes Getar (Haptic)
-        </button>
+      <!-- FAVORITES SECTION (Hidden by default) -->
+      <section id="favoritesSection" class="content-section hidden">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2 class="section-title">❤️ Koleksi Favorit Saya</h2>
+            <span id="favoritesCount" class="section-count">0 Film</span>
+          </div>
+        </div>
+        <div id="favoritesGrid" class="media-grid"></div>
+        <div id="favoritesEmpty" class="empty-state hidden">
+          <div class="empty-icon">❤️</div>
+          <h3>Belum ada film favorit</h3>
+          <p>Klik tombol favorit pada detail film untuk menyimpannya di sini.</p>
+        </div>
+      </section>
 
-        <button id="btnCopyTest" class="btn-secondary">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          Salin Teks (Clipboard)
-        </button>
+      <!-- DEFAULT SECTIONS CONTAINER -->
+      <div id="homeSections">
+        
+        <!-- SECTION 1: TRENDING MINGGU INI -->
+        <section class="content-section">
+          <div class="section-header">
+            <div class="section-title-wrap">
+              <span class="section-icon">🔥</span>
+              <h2 class="section-title">Trending Minggu Ini</h2>
+            </div>
+            <span class="section-subtitle">Paling banyak ditonton minggu ini</span>
+          </div>
+          <div id="trendingGrid" class="media-grid">
+            <!-- Skeleton cards while loading -->
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: FILM POPULER -->
+        <section class="content-section">
+          <div class="section-header">
+            <div class="section-title-wrap">
+              <span class="section-icon">🎬</span>
+              <h2 class="section-title">Film Layar Lebar Populer</h2>
+            </div>
+            <span class="section-subtitle">Koleksi film bioskop terbaik</span>
+          </div>
+          <div id="popularMoviesGrid" class="media-grid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: SERIAL TV POPULER -->
+        <section class="content-section">
+          <div class="section-header">
+            <div class="section-title-wrap">
+              <span class="section-icon">📺</span>
+              <h2 class="section-title">Serial TV & Drama</h2>
+            </div>
+            <span class="section-subtitle">Serial TV terfavorit episode lengkap</span>
+          </div>
+          <div id="popularTVGrid" class="media-grid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </section>
+
       </div>
+
     </main>
 
     <!-- FOOTER -->
     <footer class="app-footer">
-      <p>Powered by <strong>Capacitor 7</strong> & <strong>GitHub Actions</strong></p>
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo">LK21 <span class="highlight">STREAM</span></span>
+          <p>Platform Nonton Film & Serial TV Gratis Terlengkap Subtitle Indonesia.</p>
+        </div>
+        <div class="footer-info">
+          <p>Disusun dengan ❤️ &bull; Single Codebase Hybrid Ready &bull; Powered by TMDB API</p>
+          <p class="watermark-text">Created by febry.is-a.dev | GitHub: vandebry10-star</p>
+        </div>
+      </div>
     </footer>
+
+    <!-- DETAIL & PLAYER MODAL -->
+    <div id="detailModal" class="modal-overlay hidden">
+      <div class="modal-container">
+        
+        <!-- Modal Top Bar -->
+        <div class="modal-topbar">
+          <button id="btnModalClose" class="btn-icon btn-close-modal" title="Tutup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <div class="modal-topbar-actions">
+            <button id="btnModalFav" class="btn-icon btn-fav-modal" title="Tambah ke Favorit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+            <button id="btnModalShare" class="btn-icon" title="Bagikan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Hero / Header View -->
+        <div class="modal-hero">
+          <div id="modalBackdrop" class="modal-backdrop-img"></div>
+          <div class="modal-hero-overlay"></div>
+          <div class="modal-header-content">
+            <img id="modalPoster" class="modal-poster-img" src="" alt="Poster" />
+            <div class="modal-info-box">
+              <div class="modal-type-row">
+                <span id="modalTypeBadge" class="type-tag">MOVIE</span>
+                <span id="modalYearBadge" class="meta-tag">2026</span>
+                <span id="modalRuntimeBadge" class="meta-tag">120 min</span>
+                <span id="modalRatingBadge" class="rating-badge">⭐ 8.5</span>
+              </div>
+              <h2 id="modalTitle" class="modal-title">Judul Film</h2>
+              <div id="modalGenres" class="modal-genres"></div>
+              <p id="modalOverview" class="modal-overview">Sinopsis film...</p>
+              
+              <button id="btnScrollToPlayer" class="btn btn-primary btn-start-watch">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span>Putar Video Sekarang</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STREAMING PLAYER SECTION -->
+        <section class="modal-section player-section" id="playerSection">
+          <div class="player-header-bar">
+            <div class="player-title-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              <h3>Streaming Player</h3>
+            </div>
+            
+            <div class="adshield-badge">
+              <span class="shield-icon">🛡️</span>
+              <span>Ad-Shield Active (Bebas Pop-up)</span>
+            </div>
+          </div>
+
+          <!-- TV SHOW SEASON & EPISODE SELECTOR -->
+          <div id="tvShowControls" class="tv-controls-box hidden">
+            <div class="tv-controls-header">
+              <div class="season-selector-wrap">
+                <label for="seasonSelect">Pilih Musim (Season):</label>
+                <select id="seasonSelect" class="custom-select"></select>
+              </div>
+              <span id="tvTotalInfo" class="tv-total-info">Total Episode: -</span>
+            </div>
+            <div class="episode-selector-wrap">
+              <span class="episode-label">Pilih Episode:</span>
+              <div id="episodeGrid" class="episode-grid"></div>
+            </div>
+          </div>
+
+          <!-- SERVER SELECTION PILLS -->
+          <div class="server-bar">
+            <span class="server-label">Pilih Server Streaming:</span>
+            <div class="server-pills-wrap">
+              <button class="server-pill active" data-server="vidsrc">⚡ VidSrc (Rekomendasi)</button>
+              <button class="server-pill" data-server="embedsu">🌐 Embed.su</button>
+              <button class="server-pill" data-server="vidsrcpro">💎 VidSrc Pro</button>
+              <button class="server-pill" data-server="superembed">🚀 SuperEmbed</button>
+              <button class="server-pill" data-server="autoembed">🎬 AutoEmbed</button>
+              <button class="server-pill" data-server="2embed">🔥 2Embed</button>
+            </div>
+          </div>
+
+          <!-- VIDEO PLAYER CONTAINER -->
+          <div class="video-player-wrapper" id="videoWrapper">
+            <!-- Ad Shield Interactive Layer -->
+            <div id="adShieldOverlay" class="adshield-overlay hidden">
+              <div class="adshield-content">
+                <div class="adshield-shield-circle">🛡️</div>
+                <h4>Pemutar Video Siap!</h4>
+                <p>Fitur Ad-Shield aktif untuk mencegah iklan pop-up dan tab pihak ketiga.</p>
+                <button id="btnStartPlayer" class="btn btn-primary btn-lg">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  <span>Mulai Putar Film</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Standard Clean Sandboxed Iframe -->
+            <iframe 
+              id="iframePlayer" 
+              class="video-iframe" 
+              src="" 
+              allowfullscreen 
+              allow="autoplay; encrypted-media; picture-in-picture"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+            ></iframe>
+            
+            <!-- Direct Video Player (HTML5) if resolved -->
+            <video id="directVideoPlayer" class="video-element hidden" controls crossorigin="anonymous"></video>
+          </div>
+
+          <div class="player-notice">
+            <p>💡 <strong>Petunjuk:</strong> Jika server saat ini lambat atau tidak dapat diputar, silakan ganti ke pilihan <strong>Server Streaming</strong> di atas.</p>
+          </div>
+        </section>
+
+        <!-- CAST / PEMERAN UTAMA -->
+        <section class="modal-section">
+          <h3 class="modal-section-title">Pemeran Utama</h3>
+          <div id="modalCastGrid" class="cast-grid"></div>
+        </section>
+
+        <!-- REKOMENDASI SERUPA -->
+        <section class="modal-section">
+          <h3 class="modal-section-title">Rekomendasi Serupa</h3>
+          <div id="modalRecommendationsGrid" class="media-grid media-grid-sm"></div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast-container hidden">
+      <span id="toastMessage">Pesan Toast</span>
+    </div>
 
   </div>
 
