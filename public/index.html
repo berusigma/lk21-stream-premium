@@ -434,8 +434,8 @@
             <span>Putar Film</span>
           </button>
 
-          <!-- Standard iframe player with full native fullscreen permissions -->
-          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="about:blank" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope"></iframe>
+          <!-- Standard iframe player with full native fullscreen permissions & no-referrer policy -->
+          <iframe id="detailInlinePlayer" class="detail-inline-iframe hidden" src="about:blank" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope" referrerpolicy="no-referrer"></iframe>
         </div>
 
         <!-- Detail Information Content -->
@@ -466,14 +466,15 @@
 
           <!-- Language / Server Selector (SERVER 1, SERVER 2...) -->
           <div class="source-selector-section">
-            <div class="section-label">Pilih Server Streaming:</div>
+            <div class="section-label">Pilih Server Streaming (Klik jika server bermasalah):</div>
             <div class="source-pills-wrap" id="sourcePillsWrap">
-              <button class="source-pill active" data-server="vidsrc">SERVER 1</button>
-              <button class="source-pill" data-server="embedsu">SERVER 2</button>
-              <button class="source-pill" data-server="vidsrcpro">SERVER 3</button>
-              <button class="source-pill" data-server="superembed">SERVER 4</button>
+              <button class="source-pill active" data-server="vidlink">SERVER 1 (VIP)</button>
+              <button class="source-pill" data-server="vidsrc">SERVER 2 (FAST)</button>
+              <button class="source-pill" data-server="embedsu">SERVER 3 (HD)</button>
+              <button class="source-pill" data-server="vidsrcpro">SERVER 4</button>
               <button class="source-pill" data-server="autoembed">SERVER 5</button>
-              <button class="source-pill" data-server="2embed">SERVER 6</button>
+              <button class="source-pill" data-server="superembed">SERVER 6</button>
+              <button class="source-pill" data-server="2embed">SERVER 7</button>
             </div>
           </div>
 

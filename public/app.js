@@ -8,35 +8,40 @@ const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 const TMDB_IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 
-/* SERVER SELECTION MAP - RENAMED STRICTLY TO SERVER 1..6 */
+/* SERVER SELECTION MAP - RENAMED STRICTLY TO SERVER 1..7 WITH RELIABLE EMBEDS */
 const SERVERS = {
+  vidlink: { 
+    name: "SERVER 1 (VIP)",
+    movie: "https://vidlink.pro/movie/{id}", 
+    tv: "https://vidlink.pro/tv/{id}/{s}/{e}" 
+  },
   vidsrc: { 
-    name: "SERVER 1",
-    movie: "https://vidsrc.me/embed/movie?tmdb={id}", 
-    tv: "https://vidsrc.me/embed/tv?tmdb={id}&season={s}&episode={e}" 
+    name: "SERVER 2 (FAST)",
+    movie: "https://vidsrc.cc/v2/embed/movie/{id}", 
+    tv: "https://vidsrc.cc/v2/embed/tv/{id}/{s}/{e}" 
   },
   embedsu: { 
-    name: "SERVER 2",
+    name: "SERVER 3 (HD)",
     movie: "https://embed.su/embed/movie/{id}", 
     tv: "https://embed.su/embed/tv/{id}/{s}/{e}" 
   },
   vidsrcpro: { 
-    name: "SERVER 3",
+    name: "SERVER 4",
     movie: "https://vidsrc.pro/embed/movie/{id}", 
     tv: "https://vidsrc.pro/embed/tv/{id}/{s}/{e}" 
-  },
-  superembed: { 
-    name: "SERVER 4",
-    movie: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1", 
-    tv: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1&s={s}&e={e}" 
   },
   autoembed: { 
     name: "SERVER 5",
     movie: "https://player.autoembed.cc/embed/movie/{id}", 
     tv: "https://player.autoembed.cc/embed/tv/{id}/{s}/{e}" 
   },
-  "2embed": { 
+  superembed: { 
     name: "SERVER 6",
+    movie: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1", 
+    tv: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1&s={s}&e={e}" 
+  },
+  "2embed": { 
+    name: "SERVER 7",
     movie: "https://www.2embed.cc/embed/{id}", 
     tv: "https://www.2embed.cc/embedtv/{id}&s={s}&e={e}" 
   }
@@ -221,7 +226,7 @@ let state = {
   heroTimer: null,
   activeView: "viewBeranda",
   currentDetail: null,
-  activeServer: "vidsrc",
+  activeServer: "vidlink",
   activeSeason: 1,
   activeEpisode: 1,
   searchHistory: JSON.parse(localStorage.getItem("rstream_search_history") || '["Avatar 3", "Squid Game 2", "Demon Slayer", "Siksa Kubur"]'),
@@ -855,7 +860,7 @@ function closeDetailModal() {
 function startInlinePlayer() {
   if (!state.currentDetail) return;
   const { id, type, title } = state.currentDetail;
-  const serverInfo = SERVERS[state.activeServer] || SERVERS.vidsrc;
+  const serverInfo = SERVERS[state.activeServer] || SERVERS.vidlink || SERVERS.vidsrc;
   const streamUrl = type === "movie" 
     ? serverInfo.movie.replace("{id}", id) 
     : serverInfo.tv.replace("{id}", id).replace("{s}", state.activeSeason).replace("{e}", state.activeEpisode);
@@ -864,7 +869,7 @@ function startInlinePlayer() {
   el.detailInlinePlayer.classList.remove("hidden");
   el.btnDetailPlayCover.classList.add("hidden");
   saveActivePlayerSession();
-  showToast(`Memutar stream: ${title}`);
+  showToast(`Memutar: ${title} (${serverInfo.name})`);
 }
 
 async function setupTvEpisodeControls(detail) {
