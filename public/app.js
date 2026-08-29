@@ -243,7 +243,7 @@ let state = {
   popularTV: [],
   heroItems: [],
   heroIndex: 0,
-  favorites: JSON.parse(localStorage.getItem("lk21_favorites") || "[]"),
+  favorites: JSON.parse(localStorage.getItem("rstream_favorites") || "[]"),
   currentDetail: null,
   activeServer: "vidsrc",
   activeSeason: 1,
@@ -749,7 +749,7 @@ function toggleFavorite(item) {
     showToast("Disimpan ke favorit ❤️");
   }
 
-  localStorage.setItem("lk21_favorites", JSON.stringify(state.favorites));
+  localStorage.setItem("rstream_favorites", JSON.stringify(state.favorites));
   updateFavBadge();
   updateModalFavButton();
 }
@@ -864,7 +864,7 @@ function setupEventListeners() {
     if (navigator.share && state.currentDetail) {
       navigator.share({
         title: state.currentDetail.title,
-        text: `Nonton ${state.currentDetail.title} Gratis Sub Indo di LK21 Stream Premium!`,
+        text: `Nonton ${state.currentDetail.title} Gratis Sub Indo di RSTREAM!`,
         url: window.location.href,
       }).catch(() => {});
     } else {

@@ -1,7 +1,7 @@
 {
-  "name": "lk21-stream-premium",
+  "name": "rstream",
   "version": "1.0.0",
-  "description": "LK21 Stream Premium - Aplikasi Nonton Film & TV Series Gratis Sub Indo (White & Blue Theme)",
+  "description": "RSTREAM - Multi-Platform Streaming App untuk Nonton Film & Serial TV Sub Indo",
   "main": "public/index.html",
   "scripts": {
     "cap:sync": "node node_modules/@capacitor/cli/bin/capacitor sync",

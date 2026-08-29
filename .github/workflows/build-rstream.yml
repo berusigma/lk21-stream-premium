@@ -1,0 +1,122 @@
+name: RSTREAM Multi-Platform Build Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # ==========================================
+  # 1. BUILD ANDROID RELEASE & DEBUG APK
+  # ==========================================
+  build-android:
+    name: 📱 Build Android APK (RSTREAM)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install NPM Dependencies
+        run: npm ci || npm install
+
+      - name: ⚡ Sync Capacitor Android
+        run: npm run cap:sync
+
+      - name: 🔑 Generate Keystore if missing
+        run: |
+          if [ ! -f android/app/release.keystore ]; then
+            keytool -genkey -v -keystore android/app/release.keystore -alias rstream -keyalg RSA -keysize 2048 -validity 10000 -storepass rstream123 -keypass rstream123 -dname "CN=RSTREAM, OU=Streaming, O=RSTREAM Inc, L=Jakarta, S=ID, C=ID"
+          fi
+
+      - name: 🛠️ Build Android Signed Release APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+
+      - name: 📤 Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RSTREAM-Android-APK
+          path: android/app/build/outputs/apk/release/*.apk
+
+  # ==========================================
+  # 2. BUILD IOS IPA PACKAGE
+  # ==========================================
+  build-ios:
+    name: 🍎 Build iOS IPA Package (RSTREAM)
+    runs-on: macos-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install NPM Dependencies
+        run: npm ci || npm install
+
+      - name: ⚡ Sync Capacitor iOS
+        run: npm run cap:sync
+
+      - name: 🍏 Build iOS App via Xcode
+        run: |
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -sdk iphoneos -derivedDataPath ios/build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+
+      - name: 📦 Package App into .IPA File
+        run: |
+          mkdir -p ios/Payload
+          cp -r ios/build/Build/Products/Release-iphoneos/App.app ios/Payload/
+          cd ios
+          zip -r RSTREAM.ipa Payload
+          cd ..
+
+      - name: 📤 Upload iOS IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RSTREAM-iOS-IPA
+          path: ios/RSTREAM.ipa
+
+  # ==========================================
+  # 3. BUILD WEB PRODUCTION BUNDLE
+  # ==========================================
+  build-web:
+    name: 🌐 Build Web Bundle (RSTREAM)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install Dependencies & Verify Web Assets
+        run: |
+          npm ci || npm install
+          test -f public/index.html && test -f public/app.js && test -f public/style.css
+          echo "Web bundle verified successfully."
+
+      - name: 📤 Upload Web Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RSTREAM-Web-Bundle
+          path: public/

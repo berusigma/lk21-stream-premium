@@ -1,6 +1,6 @@
 {
-  "appId": "com.lk21.streampremium",
-  "appName": "LK21 Stream Premium",
+  "appId": "com.rstream.app",
+  "appName": "RSTREAM",
   "webDir": "public",
   "plugins": {
     "CapacitorHttp": {
