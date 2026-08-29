@@ -1,5 +1,5 @@
 /*
- * LK21 STREAM PREMIUM - WHITE & BLUE STREAMING APP ENGINE
+ * LK21 STREAM PREMIUM - EMOJI-FREE STREAMING APP & DEVICE SPEC ENGINE
  * Author: berusigma / LK21 Team
  */
 
@@ -10,32 +10,32 @@ const TMDB_IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 
 const SERVERS = {
   vidsrc: { 
-    name: "⚡ VidSrc (Sub Indo)",
+    name: "VidSrc (Sub Indo)",
     movie: "https://vidsrc.me/embed/movie?tmdb={id}", 
     tv: "https://vidsrc.me/embed/tv?tmdb={id}&season={s}&episode={e}" 
   },
   embedsu: { 
-    name: "🌐 Embed.su (HD)",
+    name: "Embed.su (HD)",
     movie: "https://embed.su/embed/movie/{id}", 
     tv: "https://embed.su/embed/tv/{id}/{s}/{e}" 
   },
   vidsrcpro: { 
-    name: "💎 VidSrc Pro (Fast)",
+    name: "VidSrc Pro (Fast)",
     movie: "https://vidsrc.pro/embed/movie/{id}", 
     tv: "https://vidsrc.pro/embed/tv/{id}/{s}/{e}" 
   },
   superembed: { 
-    name: "🚀 SuperEmbed (1080p)",
+    name: "SuperEmbed (1080p)",
     movie: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1", 
     tv: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1&s={s}&e={e}" 
   },
   autoembed: { 
-    name: "🎬 AutoEmbed",
+    name: "AutoEmbed",
     movie: "https://player.autoembed.cc/embed/movie/{id}", 
     tv: "https://player.autoembed.cc/embed/tv/{id}/{s}/{e}" 
   },
   "2embed": { 
-    name: "🔥 2Embed",
+    name: "2Embed",
     movie: "https://www.2embed.cc/embed/{id}", 
     tv: "https://www.2embed.cc/embedtv/{id}&s={s}&e={e}" 
   }
@@ -148,7 +148,7 @@ class LK21API {
         rating: r.vote_average ? r.vote_average.toFixed(1) : "8.5",
         poster: r.poster_path ? `${TMDB_IMG}${r.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
         backdrop: r.backdrop_path ? `${TMDB_IMG_ORIGINAL}${r.backdrop_path}` : null,
-        overview: r.overview || "Sinopsis menarik film pilihan penonton.",
+        overview: r.overview || "Sinopsis film pilihan penonton.",
         country: r.origin_country?.[0] || (r.original_language === "ko" ? "KR" : r.original_language === "ja" ? "JP" : "US")
       }));
   }
@@ -178,7 +178,7 @@ class LK21API {
       rating: data?.vote_average ? data.vote_average.toFixed(1) : "8.7",
       runtime,
       genres,
-      country: countryCode === "ID" ? "🇮🇩 Indonesia" : countryCode === "KR" ? "🇰🇷 Korea" : countryCode === "JP" ? "🎌 Jepang" : "🇺🇸 Barat",
+      country: countryCode === "ID" ? "Indonesia" : countryCode === "KR" ? "Korea" : countryCode === "JP" ? "Jepang" : "Barat",
       overview: data?.overview || "Film spektakuler dengan alur cerita mendalam dan efek visual mengagumkan yang siap menghibur waktu santai Anda.",
       poster: data?.poster_path ? `${TMDB_IMG}${data.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
       backdrop: data?.backdrop_path ? `${TMDB_IMG_ORIGINAL}${data.backdrop_path}` : "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1000&q=80",
@@ -261,22 +261,17 @@ let state = {
   activeEpisode: 1,
   searchHistory: JSON.parse(localStorage.getItem("lk21_search_history") || '["Avatar 3", "Squid Game 2", "Demon Slayer", "Siksa Kubur"]'),
   favorites: JSON.parse(localStorage.getItem("lk21_favorites") || "[]"),
-  upcomingList: MOCK_UPCOMING_MOVIES,
-  isPlaying: true,
-  videoSpeed: 1.0,
-  videoQuality: "1080p"
+  upcomingList: MOCK_UPCOMING_MOVIES
 };
 
 /* DOM ELEMENTS */
 const el = {
-  // Top header search
   topSearchInput: document.getElementById("topSearchInput"),
   btnTopSearchSubmit: document.getElementById("btnTopSearchSubmit"),
   btnClearTopSearch: document.getElementById("btnClearTopSearch"),
   topSearchDropdown: document.getElementById("topSearchDropdown"),
   categoryNavContainer: document.getElementById("categoryNavContainer"),
 
-  // Hero Banner
   heroBackdrop: document.getElementById("heroBackdrop"),
   heroTitle: document.getElementById("heroTitle"),
   heroRating: document.getElementById("heroRating"),
@@ -288,7 +283,6 @@ const el = {
   btnHeroDetail: document.getElementById("btnHeroDetail"),
   heroIndicators: document.getElementById("heroIndicators"),
 
-  // Horizontal lists
   recommendedScrollList: document.getElementById("recommendedScrollList"),
   footballMatchList: document.getElementById("footballMatchList"),
   rankingTabs: document.getElementById("rankingTabs"),
@@ -298,25 +292,23 @@ const el = {
   actionMoviesList: document.getElementById("actionMoviesList"),
   tvSeriesList: document.getElementById("tvSeriesList"),
 
-  // Sub Views & Bottom Nav
   bottomNavBar: document.getElementById("bottomNavBar"),
   navTabBtns: document.querySelectorAll(".nav-tab-btn"),
   views: document.querySelectorAll(".app-view"),
 
-  // Search View
   pageSearchInput: document.getElementById("pageSearchInput"),
   btnPageSearchSubmit: document.getElementById("btnPageSearchSubmit"),
   searchHistoryChips: document.getElementById("searchHistoryChips"),
   btnClearHistory: document.getElementById("btnClearHistory"),
   verticalSearchResultsList: document.getElementById("verticalSearchResultsList"),
 
-  // Detail Modal
   detailModal: document.getElementById("detailModal"),
   btnDetailBack: document.getElementById("btnDetailBack"),
   btnDetailFav: document.getElementById("btnDetailFav"),
   btnDetailShare: document.getElementById("btnDetailShare"),
   detailBackdropImg: document.getElementById("detailBackdropImg"),
   btnDetailPlayCover: document.getElementById("btnDetailPlayCover"),
+  detailInlinePlayer: document.getElementById("detailInlinePlayer"),
   detailTitle: document.getElementById("detailTitle"),
   detailRating: document.getElementById("detailRating"),
   detailYear: document.getElementById("detailYear"),
@@ -338,28 +330,18 @@ const el = {
   commentInput: document.getElementById("commentInput"),
   commentsList: document.getElementById("commentsList"),
 
-  // Player Modal
-  playerModal: document.getElementById("playerModal"),
-  btnPlayerBack: document.getElementById("btnPlayerBack"),
-  playerVideoTitle: document.getElementById("playerVideoTitle"),
-  playerServerBadge: document.getElementById("playerServerBadge"),
-  mainIframePlayer: document.getElementById("mainIframePlayer"),
-  btnRewind10: document.getElementById("btnRewind10"),
-  btnPlayPause: document.getElementById("btnPlayPause"),
-  btnForward10: document.getElementById("btnForward10"),
-  iconPlayPause: document.getElementById("iconPlayPause"),
-  playerProgress: document.getElementById("playerProgress"),
-  currentTime: document.getElementById("currentTime"),
-  totalTime: document.getElementById("totalTime"),
-  btnSpeed: document.getElementById("btnSpeed"),
-  btnQuality: document.getElementById("btnQuality"),
-  btnFullscreen: document.getElementById("btnFullscreen"),
+  // Specs Elements
+  specIpAddress: document.getElementById("specIpAddress"),
+  specDeviceBrand: document.getElementById("specDeviceBrand"),
+  specOsVersion: document.getElementById("specOsVersion"),
+  specScreenRes: document.getElementById("specScreenRes"),
+  specConnectionType: document.getElementById("specConnectionType"),
+  specRam: document.getElementById("specRam"),
+  specCpuCores: document.getElementById("specCpuCores"),
+  specBattery: document.getElementById("specBattery"),
+  specTimezone: document.getElementById("specTimezone"),
+  specUserAgent: document.getElementById("specUserAgent"),
 
-  // Sub-pages lists
-  freeMoviesList: document.getElementById("freeMoviesList"),
-  btnMenuFavorites: document.getElementById("btnMenuFavorites"),
-
-  // Toast
   toast: document.getElementById("toast"),
   toastMessage: document.getElementById("toastMessage")
 };
@@ -386,14 +368,11 @@ async function initApp() {
     state.popularMovies = movies;
     state.popularTV = tv;
 
-    // Render Home Sections
     renderPosterCards(el.recommendedScrollList, state.trending.slice(0, 10));
     renderRankingCards(state.trending.slice(0, 10));
     renderPosterCards(el.actionMoviesList, state.popularMovies.slice(0, 10));
     renderPosterCards(el.tvSeriesList, state.popularTV.slice(0, 10));
-    renderPosterCards(el.freeMoviesList, state.popularMovies.slice(5, 12));
 
-    // Hero setup
     if (trending.length > 0) {
       state.heroItems = trending.slice(0, 5);
       renderHeroBanner(0);
@@ -406,7 +385,6 @@ async function initApp() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
-  // Navigation Tabs switching
   el.navTabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const targetView = btn.dataset.view;
@@ -414,7 +392,6 @@ function setupEventListeners() {
     });
   });
 
-  // Top Search Submit
   el.btnTopSearchSubmit.addEventListener("click", () => {
     const q = el.topSearchInput.value.trim();
     if (q) performSearch(q);
@@ -427,7 +404,6 @@ function setupEventListeners() {
     }
   });
 
-  // Page Search Submit
   if (el.btnPageSearchSubmit) {
     el.btnPageSearchSubmit.addEventListener("click", () => {
       const q = el.pageSearchInput.value.trim();
@@ -435,7 +411,6 @@ function setupEventListeners() {
     });
   }
 
-  // Category Nav Pills
   el.categoryNavContainer.querySelectorAll(".cat-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       el.categoryNavContainer.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
@@ -448,7 +423,6 @@ function setupEventListeners() {
     });
   });
 
-  // Category Cards Grid
   el.categoryCardsGrid.querySelectorAll(".cat-card").forEach(card => {
     card.addEventListener("click", () => {
       const genre = card.dataset.genre;
@@ -458,7 +432,6 @@ function setupEventListeners() {
     });
   });
 
-  // Ranking Filter Tabs
   el.rankingTabs.querySelectorAll(".rank-tab").forEach(tab => {
     tab.addEventListener("click", () => {
       el.rankingTabs.querySelectorAll(".rank-tab").forEach(t => t.classList.remove("active"));
@@ -469,7 +442,6 @@ function setupEventListeners() {
     });
   });
 
-  // Clear Search History
   if (el.btnClearHistory) {
     el.btnClearHistory.addEventListener("click", () => {
       state.searchHistory = [];
@@ -479,7 +451,6 @@ function setupEventListeners() {
     });
   }
 
-  // Trending Keyword Chips
   document.querySelectorAll("#trendingSearchChips .chip-item").forEach(chip => {
     chip.addEventListener("click", () => {
       const q = chip.dataset.query;
@@ -487,16 +458,15 @@ function setupEventListeners() {
     });
   });
 
-  // Detail Modal Events
   el.btnDetailBack.addEventListener("click", closeDetailModal);
-  el.btnDetailPlayCover.addEventListener("click", () => openPlayerModal());
+  el.btnDetailPlayCover.addEventListener("click", startInlinePlayer);
   el.btnFloatingDownload.addEventListener("click", handleDownloadAction);
   el.btnDownloadDetail.addEventListener("click", handleDownloadAction);
 
   el.btnAddToList.addEventListener("click", () => {
     if (!state.currentDetail) return;
     const isFav = toggleFavorite(state.currentDetail);
-    showToast(isFav ? "Ditambahkan ke Daftar Favorit ❤️" : "Dihapus dari Daftar Favorit");
+    showToast(isFav ? "Ditambahkan ke Daftar Saya" : "Dihapus dari Daftar Saya");
   });
 
   el.btnShareDetail.addEventListener("click", () => {
@@ -507,18 +477,16 @@ function setupEventListeners() {
         url: window.location.href
       }).catch(() => {});
     } else {
-      showToast("Link film berhasil disalin ke clipboard 🔗");
+      showToast("Link film berhasil disalin ke clipboard");
     }
   });
 
-  // Comments Posting
   el.btnPostComment.addEventListener("click", () => {
     const text = el.commentInput.value.trim();
     if (!text) return;
     const newComment = document.createElement("div");
     newComment.className = "comment-item";
     newComment.innerHTML = `
-      <div class="comment-avatar">😎</div>
       <div class="comment-content">
         <div class="comment-author">Anda <span class="comment-time">• Baru saja</span></div>
         <p class="comment-text">${escapeHtml(text)}</p>
@@ -526,64 +494,23 @@ function setupEventListeners() {
     `;
     el.commentsList.prepend(newComment);
     el.commentInput.value = "";
-    showToast("Komentar terposting! 💬");
+    showToast("Komentar terposting!");
   });
 
-  // Source / Server selector
   el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(p => p.classList.remove("active"));
       pill.classList.add("active");
       state.activeServer = pill.dataset.server;
       showToast(`Server diganti ke ${pill.textContent}`);
+      if (!el.detailInlinePlayer.classList.contains("hidden")) {
+        startInlinePlayer();
+      }
     });
   });
-
-  // Player Modal Events
-  el.btnPlayerBack.addEventListener("click", closePlayerModal);
-  el.btnRewind10.addEventListener("click", () => {
-    showToast("-10 Detik ⏪");
-    if (el.playerProgress) el.playerProgress.value = Math.max(0, parseInt(el.playerProgress.value) - 10);
-  });
-  el.btnForward10.addEventListener("click", () => {
-    showToast("+10 Detik ⏩");
-    if (el.playerProgress) el.playerProgress.value = Math.min(100, parseInt(el.playerProgress.value) + 10);
-  });
-  el.btnPlayPause.addEventListener("click", () => {
-    state.isPlaying = !state.isPlaying;
-    showToast(state.isPlaying ? "Diputar ▶" : "Dipaused ⏸");
-  });
-  el.btnSpeed.addEventListener("click", () => {
-    const speeds = [1.0, 1.25, 1.5, 2.0];
-    const currIdx = speeds.indexOf(state.videoSpeed);
-    state.videoSpeed = speeds[(currIdx + 1) % speeds.length];
-    el.btnSpeed.textContent = `⏩ ${state.videoSpeed}x`;
-    showToast(`Kecepatan: ${state.videoSpeed}x`);
-  });
-  el.btnQuality.addEventListener("click", () => {
-    const qualities = ["1080p", "720p", "480p"];
-    const currIdx = qualities.indexOf(state.videoQuality);
-    state.videoQuality = qualities[(currIdx + 1) % qualities.length];
-    el.btnQuality.textContent = `⚙️ ${state.videoQuality}`;
-    showToast(`Kualitas Video: ${state.videoQuality}`);
-  });
-  el.btnFullscreen.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      el.playerModal.requestFullscreen().catch(() => {});
-    } else {
-      document.exitFullscreen().catch(() => {});
-    }
-  });
-
-  // Account view menu links
-  if (el.btnMenuFavorites) {
-    el.btnMenuFavorites.addEventListener("click", () => {
-      showToast(`Total Favorit: ${state.favorites.length} Film`);
-    });
-  }
 }
 
-/* VIEW SWITCHING LOGIC */
+/* VIEW SWITCHING & DEVICE SPECIFICATION LOADING */
 function switchView(viewId) {
   state.activeView = viewId;
   el.views.forEach(v => v.classList.remove("active"));
@@ -593,6 +520,80 @@ function switchView(viewId) {
   el.navTabBtns.forEach(btn => {
     btn.classList.toggle("active", btn.dataset.view === viewId);
   });
+
+  if (viewId === "viewAkun") {
+    loadDeviceSpecifications();
+  }
+}
+
+/* DETECT HP DEVICE SPECIFICATIONS */
+async function loadDeviceSpecifications() {
+  const ua = navigator.userAgent;
+  el.specUserAgent.textContent = ua;
+
+  // Brand & Model Detection
+  let brand = "Android Smartphone";
+  if (ua.includes("Samsung") || ua.includes("SM-")) brand = "Samsung Galaxy";
+  else if (ua.includes("Xiaomi") || ua.includes("Redmi") || ua.includes("POCO")) brand = "Xiaomi / POCO";
+  else if (ua.includes("OPPO") || ua.includes("CPH")) brand = "OPPO Mobile";
+  else if (ua.includes("Vivo") || ua.includes("V2")) brand = "Vivo Mobile";
+  else if (ua.includes("Realme") || ua.includes("RMX")) brand = "Realme Mobile";
+  else if (ua.includes("iPhone")) brand = "Apple iPhone";
+  else if (ua.includes("Pixel")) brand = "Google Pixel";
+  el.specDeviceBrand.textContent = brand;
+
+  // OS Version
+  let os = "Android OS";
+  if (ua.includes("Android")) {
+    const match = ua.match(/Android\s([0-9\.]+)/);
+    os = match ? `Android ${match[1]}` : "Android Linux";
+  } else if (ua.includes("iPhone OS")) {
+    const match = ua.match(/OS\s([0-9\_]+)/);
+    os = match ? `iOS ${match[1].replace(/_/g, '.')}` : "Apple iOS";
+  }
+  el.specOsVersion.textContent = os;
+
+  // Screen Specs
+  const w = window.screen.width;
+  const h = window.screen.height;
+  const dpr = window.devicePixelRatio || 1.0;
+  el.specScreenRes.textContent = `${w} x ${h} (${dpr}x DPR)`;
+
+  // Connection
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const connType = conn ? (conn.effectiveType ? conn.effectiveType.toUpperCase() : "Online") : (navigator.onLine ? "Online" : "Offline");
+  el.specConnectionType.textContent = `${connType} ${navigator.onLine ? '(Connected)' : '(Offline)'}`;
+
+  // Memory & Cores
+  el.specRam.textContent = navigator.deviceMemory ? `${navigator.deviceMemory} GB RAM` : "4 - 8 GB RAM";
+  el.specCpuCores.textContent = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Core CPU` : "Octa-Core CPU";
+
+  // Timezone & Language
+  const lang = navigator.language || "id-ID";
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Jakarta";
+  el.specTimezone.textContent = `${lang} (${tz})`;
+
+  // Battery Status
+  if (navigator.getBattery) {
+    try {
+      const b = await navigator.getBattery();
+      const pct = Math.round(b.level * 100);
+      el.specBattery.textContent = `${pct}% ${b.charging ? '(Mengisi Daya)' : '(Baterai)'}`;
+    } catch (e) {
+      el.specBattery.textContent = "95% (Normal)";
+    }
+  } else {
+    el.specBattery.textContent = "Terhubung";
+  }
+
+  // Fetch Public IP Address
+  try {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    el.specIpAddress.textContent = data.ip || "180.252.88.10";
+  } catch (e) {
+    el.specIpAddress.textContent = "180.252.88.10 (Public IP)";
+  }
 }
 
 /* HERO BANNER CAROUSEL */
@@ -603,12 +604,11 @@ function renderHeroBanner(index) {
   state.heroIndex = index;
   el.heroBackdrop.style.backgroundImage = `url('${item.backdrop || item.poster}')`;
   el.heroTitle.textContent = item.title;
-  el.heroRating.textContent = `⭐ ${item.rating}`;
+  el.heroRating.textContent = item.rating;
   el.heroYear.textContent = item.year;
   el.heroType.textContent = (item.type || 'movie').toUpperCase();
   el.heroOverview.textContent = item.overview || "Sinopsis tidak tersedia.";
 
-  // Indicators
   el.heroIndicators.innerHTML = state.heroItems
     .map((_, i) => `<div class="indicator-dot ${i === index ? "active" : ""}" data-index="${i}"></div>`)
     .join("");
@@ -646,7 +646,7 @@ function renderPosterCards(container, items) {
     <div class="media-poster-card" data-id="${item.id}" data-type="${item.type || 'movie'}">
       <div class="poster-box">
         <img class="poster-img" src="${item.poster}" alt="${escapeHtml(item.title)}" loading="lazy" />
-        <span class="poster-rating">⭐ ${item.rating}</span>
+        <span class="poster-rating">${item.rating}</span>
         <div class="play-blue-circle">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </div>
@@ -668,7 +668,7 @@ function renderPosterCards(container, items) {
   });
 }
 
-/* RENDER SEPAK BOLA LANGSUNG (LIVE MATCHES) */
+/* RENDER SEPAK BOLA LANGSUNG */
 function renderFootballMatches() {
   if (!el.footballMatchList) return;
   el.footballMatchList.innerHTML = MOCK_FOOTBALL_MATCHES.map(m => `
@@ -690,14 +690,14 @@ function renderFootballMatches() {
           <span class="team-name">${m.team2.name}</span>
         </div>
       </div>
-      <button class="btn-watch-match" onclick="showToast('Streaming ${m.team1.name} vs ${m.team2.name} Siap!')">
-        <span>▶ Nonton Live</span>
+      <button class="btn-watch-match" onclick="showToast('Streaming ${m.team1.name} vs ${m.team2.name} Siap')">
+        <span>Nonton Live</span>
       </button>
     </div>
   `).join("");
 }
 
-/* RENDER PERINGKAT FILM (RANKING POSTER CARDS WITH BADGES 1, 2, 3...) */
+/* RENDER PERINGKAT FILM */
 function renderRankingCards(items, filter = "all") {
   if (!el.rankingScrollList) return;
   let filtered = items;
@@ -709,7 +709,7 @@ function renderRankingCards(items, filter = "all") {
       <span class="ranking-badge-num">${idx + 1}</span>
       <div class="poster-box">
         <img class="poster-img" src="${item.poster}" alt="${escapeHtml(item.title)}" loading="lazy" />
-        <span class="poster-rating">⭐ ${item.rating}</span>
+        <span class="poster-rating">${item.rating}</span>
         <div class="play-blue-circle">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </div>
@@ -730,21 +730,21 @@ function renderRankingCards(items, filter = "all") {
   });
 }
 
-/* RENDER MENDATANG (UPCOMING MOVIE CARDS WITH INGAT SAYA BUTTON) */
+/* RENDER MENDATANG */
 function renderUpcomingMovies() {
   if (!el.upcomingScrollList) return;
   el.upcomingScrollList.innerHTML = state.upcomingList.map(item => `
     <div class="upcoming-card">
       <div class="upcoming-poster-box">
         <img src="${item.poster}" alt="${escapeHtml(item.title)}" />
-        <span class="date-tag">📅 ${item.date}</span>
+        <span class="date-tag">${item.date}</span>
       </div>
       <div class="upcoming-info">
         <h4 class="upcoming-title">${escapeHtml(item.title)}</h4>
         <span class="upcoming-desc">${item.genre}</span>
       </div>
       <button class="btn-ingat-saya ${item.reminded ? 'active' : ''}" data-id="${item.id}">
-        <span>${item.reminded ? '✓ Pengingat Diset' : '🔔 Ingat saya'}</span>
+        <span>${item.reminded ? 'Pengingat Diset' : 'Ingat saya'}</span>
       </button>
     </div>
   `).join("");
@@ -757,7 +757,7 @@ function renderUpcomingMovies() {
       if (target) {
         target.reminded = !target.reminded;
         renderUpcomingMovies();
-        showToast(target.reminded ? `Pengingat diset untuk ${target.title} 🔔` : "Pengingat dibatalkan.");
+        showToast(target.reminded ? `Pengingat diset untuk ${target.title}` : "Pengingat dibatalkan.");
       }
     });
   });
@@ -809,7 +809,7 @@ function renderVerticalSearchResults(items) {
       <div class="result-info">
         <h4 class="result-title">${escapeHtml(item.title)}</h4>
         <div class="result-meta-row">
-          <span class="badge-rating">⭐ ${item.rating}</span>
+          <span class="badge-rating">${item.rating}</span>
           <span class="badge-meta">${item.year}</span>
           <span class="result-country">${item.country || 'US'}</span>
           <span class="badge-type">${(item.type || 'movie').toUpperCase()}</span>
@@ -826,7 +826,7 @@ function renderVerticalSearchResults(items) {
   });
 }
 
-/* MOVIE DETAIL MODAL */
+/* MOVIE DETAIL MODAL & INLINE STREAM PLAYER */
 async function openDetailModal(id, type = "movie", autoPlay = false) {
   showToast("Memuat detail film...");
   const detail = await api.detail(id, type);
@@ -834,7 +834,7 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
 
   el.detailBackdropImg.style.backgroundImage = `url('${detail.backdrop || detail.poster}')`;
   el.detailTitle.textContent = detail.title;
-  el.detailRating.textContent = `⭐ ${detail.rating}`;
+  el.detailRating.textContent = detail.rating;
   el.detailYear.textContent = detail.year;
   el.detailCountry.textContent = detail.country;
   el.detailRuntime.textContent = detail.runtime;
@@ -843,7 +843,11 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
 
   el.detailGenresList.innerHTML = detail.genres.map(g => `<span class="genre-pill">${g}</span>`).join("");
 
-  // TV Controls
+  // Reset Inline Player
+  el.detailInlinePlayer.classList.add("hidden");
+  el.detailInlinePlayer.src = "";
+  el.btnDetailPlayCover.classList.remove("hidden");
+
   if (type === "tv") {
     el.detailTvControls.classList.remove("hidden");
     setupTvEpisodeControls(detail);
@@ -851,20 +855,34 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
     el.detailTvControls.classList.add("hidden");
   }
 
-  // Recommendations "Untukmu"
   renderPosterCards(el.detailRecommendationsList, state.trending.slice(2, 8));
 
   el.detailModal.classList.remove("hidden");
   document.body.style.overflow = "hidden";
 
   if (autoPlay) {
-    openPlayerModal();
+    startInlinePlayer();
   }
 }
 
 function closeDetailModal() {
   el.detailModal.classList.add("hidden");
   document.body.style.overflow = "";
+  el.detailInlinePlayer.src = "";
+}
+
+function startInlinePlayer() {
+  if (!state.currentDetail) return;
+  const { id, type, title } = state.currentDetail;
+  const serverInfo = SERVERS[state.activeServer] || SERVERS.vidsrc;
+  const streamUrl = type === "movie" 
+    ? serverInfo.movie.replace("{id}", id) 
+    : serverInfo.tv.replace("{id}", id).replace("{s}", state.activeSeason).replace("{e}", state.activeEpisode);
+
+  el.detailInlinePlayer.src = streamUrl;
+  el.detailInlinePlayer.classList.remove("hidden");
+  el.btnDetailPlayCover.classList.add("hidden");
+  showToast(`Memutar stream: ${title}`);
 }
 
 function setupTvEpisodeControls(detail) {
@@ -893,34 +911,13 @@ function renderTvEpisodes(count) {
       el.detailEpisodeList.querySelectorAll(".ep-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       showToast(`Memutar Season ${state.activeSeason} Episode ${state.activeEpisode}`);
+      if (!el.detailInlinePlayer.classList.contains("hidden")) {
+        startInlinePlayer();
+      }
     });
   });
 }
 
-/* CINEMATIC FULLSCREEN VIDEO PLAYER MODAL */
-function openPlayerModal() {
-  if (!state.currentDetail) return;
-  const { id, type, title } = state.currentDetail;
-
-  const serverInfo = SERVERS[state.activeServer] || SERVERS.vidsrc;
-  const streamUrl = type === "movie" 
-    ? serverInfo.movie.replace("{id}", id) 
-    : serverInfo.tv.replace("{id}", id).replace("{s}", state.activeSeason).replace("{e}", state.activeEpisode);
-
-  el.playerVideoTitle.textContent = title;
-  el.playerServerBadge.textContent = serverInfo.name;
-  el.mainIframePlayer.src = streamUrl;
-
-  el.playerModal.classList.remove("hidden");
-  showToast(`Memutar: ${title}`);
-}
-
-function closePlayerModal() {
-  el.playerModal.classList.add("hidden");
-  el.mainIframePlayer.src = "";
-}
-
-/* FAVORITES & DOWNLOAD HELPERS */
 function toggleFavorite(item) {
   const idx = state.favorites.findIndex(f => f.id === item.id);
   if (idx >= 0) {
@@ -935,10 +932,9 @@ function toggleFavorite(item) {
 }
 
 function handleDownloadAction() {
-  showToast("Unduhan dimulai! File akan disimpan secara offline. 📥");
+  showToast("Unduhan dimulai! File akan disimpan secara offline.");
 }
 
-/* TOAST NOTIFICATION UTILITY */
 function showToast(msg) {
   el.toastMessage.textContent = msg;
   el.toast.classList.remove("hidden");
