@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LK21 STREAM PREMIUM - WHITE & BLUE EMOJI-FREE DESIGN SYSTEM
+   RSTREAM PREMIUM - WHITE & BLUE STREAMING SYSTEM
    ========================================================================== */
 
 :root {
@@ -25,10 +25,6 @@
   --text-sub: #334155;
   --text-muted: #64748b;
   --text-light: #94a3b8;
-  
-  --badge-gold: linear-gradient(135deg, #1e6eeb 0%, #0052cc 100%);
-  --badge-blue: linear-gradient(135deg, #1e6eeb 0%, #0284c7 100%);
-  --live-red: #ef4444;
   
   --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 8px 20px -4px rgba(30, 110, 235, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
@@ -261,43 +257,6 @@ body {
   overflow-y: auto;
   z-index: 150;
   padding: 0.4rem;
-}
-
-.search-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.65rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.search-item:hover {
-  background: var(--bg-surface);
-}
-
-.search-item img {
-  width: 38px;
-  height: 54px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.search-item-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.search-item-title {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-main);
-}
-
-.search-item-sub {
-  font-size: 0.75rem;
-  color: var(--text-muted);
 }
 
 /* Category Navigation Pills Bar */
@@ -703,129 +662,6 @@ body {
 }
 
 /* ==========================================================================
-   SEPAK BOLA LANGSUNG (LIVE FOOTBALL MATCH CARDS)
-   ========================================================================== */
-
-.match-card {
-  flex: 0 0 240px;
-  scroll-snap-align: start;
-  background: var(--bg-surface);
-  border: 1.5px solid rgba(30, 110, 235, 0.2);
-  border-radius: var(--radius-md);
-  padding: 0.85rem;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  position: relative;
-}
-
-.match-status-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.match-status-badge {
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 0.15rem 0.5rem;
-  border-radius: var(--radius-full);
-}
-
-.match-status-badge.live {
-  background: #fee2e2;
-  color: var(--live-red);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.match-status-badge.upcoming {
-  background: #dbeafe;
-  color: var(--primary-blue);
-  border: 1px solid rgba(30, 110, 235, 0.3);
-}
-
-.pulse-red {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: var(--live-red);
-  border-radius: 50%;
-  margin-right: 3px;
-  animation: pulse 1.2s infinite;
-}
-
-.match-league {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.match-teams-vs {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 0.25rem 0;
-}
-
-.team-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  width: 80px;
-}
-
-.team-logo {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-}
-
-.team-name {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-main);
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.vs-badge {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.85rem;
-  color: var(--primary-blue);
-  background: #ffffff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--primary-blue-subtle);
-  box-shadow: 0 2px 6px rgba(30, 110, 235, 0.12);
-}
-
-.btn-watch-match {
-  width: 100%;
-  background: var(--primary-gradient);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-full);
-  padding: 0.45rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-}
-
-/* ==========================================================================
    PERINGKAT FILM (RANKING POSTER CARDS WITH BADGES 1, 2, 3...)
    ========================================================================== */
 
@@ -1031,7 +867,7 @@ body {
 }
 
 /* ==========================================================================
-   FIXED FLOATING BOTTOM NAVIGATION BAR (4 ITEMS)
+   FIXED FLOATING BOTTOM NAVIGATION BAR (3 ITEMS: Beranda, Pencarian, Akun)
    ========================================================================== */
 
 .bottom-nav-bar {
@@ -1063,7 +899,7 @@ body {
   gap: 0.2rem;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 0.35rem 0.85rem;
+  padding: 0.35rem 1.25rem;
   border-radius: var(--radius-full);
   transition: all 0.2s ease;
 }
@@ -1157,33 +993,6 @@ body {
   background: var(--bg-surface);
   border-color: var(--primary-blue-subtle);
   color: var(--primary-blue);
-}
-
-.search-tabs-bar {
-  display: flex;
-  gap: 0.4rem;
-  border-bottom: 1.5px solid var(--border-color);
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-  overflow-x: auto;
-}
-
-.search-tab {
-  background: none;
-  border: none;
-  font-family: var(--font-main);
-  font-size: 0.825rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.search-tab.active {
-  color: var(--primary-blue);
-  font-weight: 800;
-  border-bottom: 2.5px solid var(--primary-blue);
 }
 
 /* Vertical Search Results Items */
@@ -1549,38 +1358,36 @@ body {
 }
 
 .detail-action-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
+  display: flex;
   margin-bottom: 1.25rem;
 }
 
-.action-btn {
-  background: var(--bg-body);
-  border: 1px solid var(--border-color);
+.action-btn-full {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--primary-blue-subtle);
   border-radius: var(--radius-md);
-  padding: 0.65rem 0.4rem;
+  padding: 0.75rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.725rem;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-sub);
+  color: var(--primary-blue);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.action-svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--primary-blue);
+.action-btn-full:hover {
+  background: var(--primary-blue);
+  color: #ffffff;
 }
 
-.action-btn:hover {
-  background: var(--bg-surface);
-  border-color: var(--primary-blue);
-  color: var(--primary-blue);
+.action-btn-full svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
 }
 
 .source-selector-section {
@@ -1605,9 +1412,9 @@ body {
   background: #ffffff;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
-  padding: 0.4rem 0.85rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.45rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: var(--text-sub);
   cursor: pointer;
   white-space: nowrap;
@@ -1731,191 +1538,6 @@ body {
 .comment-text {
   font-size: 0.78rem;
   color: var(--text-sub);
-}
-
-/* Large Floating Download Button */
-.floating-download-bar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 540px;
-  background: #ffffff;
-  border-top: 1px solid var(--border-color);
-  padding: 0.75rem 1rem;
-  z-index: 180;
-}
-
-.btn-large-blue-download {
-  width: 100%;
-  background: var(--primary-gradient);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-full);
-  padding: 0.85rem;
-  font-family: var(--font-main);
-  font-weight: 800;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  box-shadow: var(--shadow-float);
-}
-
-.btn-large-blue-download svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* Short TV Sub-page */
-.short-reel-card {
-  position: relative;
-  width: 100%;
-  height: calc(100vh - 160px);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: #0f172a;
-}
-
-.short-video-mock {
-  position: absolute;
-  inset: 0;
-}
-
-.short-video-mock img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.85;
-}
-
-.short-play-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: rgba(30, 110, 235, 0.85);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.short-play-btn svg {
-  width: 28px;
-  height: 28px;
-}
-
-.short-overlay-content {
-  position: absolute;
-  bottom: 1.25rem;
-  left: 1rem;
-  right: 4.5rem;
-  color: #ffffff;
-}
-
-.short-author {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-}
-
-.btn-follow {
-  background: var(--primary-blue);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-full);
-  padding: 0.2rem 0.6rem;
-  font-size: 0.68rem;
-  font-weight: 800;
-}
-
-.short-title {
-  font-size: 0.95rem;
-  font-weight: 800;
-  margin-bottom: 0.2rem;
-}
-
-.short-desc {
-  font-size: 0.75rem;
-  opacity: 0.85;
-}
-
-.short-actions {
-  position: absolute;
-  right: 0.85rem;
-  bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-}
-
-.short-action-btn {
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  cursor: pointer;
-}
-
-.short-action-btn svg {
-  width: 26px;
-  height: 26px;
-}
-
-.short-action-btn span {
-  font-size: 0.68rem;
-  font-weight: 700;
-}
-
-/* Download Page */
-.download-page-header {
-  margin-bottom: 1.25rem;
-}
-
-.storage-bar-wrap {
-  margin-top: 0.85rem;
-  background: var(--bg-surface);
-  padding: 0.85rem;
-  border-radius: var(--radius-md);
-}
-
-.storage-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin-bottom: 0.4rem;
-}
-
-.storage-track {
-  height: 8px;
-  background: #cbd5e1;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.storage-fill {
-  height: 100%;
-  background: var(--primary-blue);
-  border-radius: 4px;
-}
-
-.empty-state-download {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text-muted);
 }
 
 /* Toast Container */

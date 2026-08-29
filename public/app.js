@@ -1,6 +1,6 @@
 /*
- * LK21 STREAM PREMIUM - EMOJI-FREE STREAMING APP & DEVICE SPEC ENGINE
- * Author: berusigma / LK21 Team
+ * RSTREAM PREMIUM - STREAM ENGINE & HP SYSTEM INFO
+ * Author: berusigma / RSTREAM Team
  */
 
 const TMDB_API_KEY = "82524e2faef91706a2d52d52496130ac";
@@ -8,78 +8,39 @@ const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMG = "https://image.tmdb.org/t/p/w500";
 const TMDB_IMG_ORIGINAL = "https://image.tmdb.org/t/p/original";
 
+/* SERVER SELECTION MAP - RENAMED TO SERVER 1..6 */
 const SERVERS = {
   vidsrc: { 
-    name: "VidSrc (Sub Indo)",
+    name: "SERVER 1",
     movie: "https://vidsrc.me/embed/movie?tmdb={id}", 
     tv: "https://vidsrc.me/embed/tv?tmdb={id}&season={s}&episode={e}" 
   },
   embedsu: { 
-    name: "Embed.su (HD)",
+    name: "SERVER 2",
     movie: "https://embed.su/embed/movie/{id}", 
     tv: "https://embed.su/embed/tv/{id}/{s}/{e}" 
   },
   vidsrcpro: { 
-    name: "VidSrc Pro (Fast)",
+    name: "SERVER 3",
     movie: "https://vidsrc.pro/embed/movie/{id}", 
     tv: "https://vidsrc.pro/embed/tv/{id}/{s}/{e}" 
   },
   superembed: { 
-    name: "SuperEmbed (1080p)",
+    name: "SERVER 4",
     movie: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1", 
     tv: "https://multiembed.mov/directstream.php?video_id={id}&tmdb=1&s={s}&e={e}" 
   },
   autoembed: { 
-    name: "AutoEmbed",
+    name: "SERVER 5",
     movie: "https://player.autoembed.cc/embed/movie/{id}", 
     tv: "https://player.autoembed.cc/embed/tv/{id}/{s}/{e}" 
   },
   "2embed": { 
-    name: "2Embed",
+    name: "SERVER 6",
     movie: "https://www.2embed.cc/embed/{id}", 
     tv: "https://www.2embed.cc/embedtv/{id}&s={s}&e={e}" 
   }
 };
-
-/* MOCK FOOTBALL MATCHES DATA */
-const MOCK_FOOTBALL_MATCHES = [
-  {
-    id: "match-1",
-    league: "Premier League",
-    status: "LIVE",
-    time: "78'",
-    isLive: true,
-    team1: { name: "Arsenal", logo: "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg" },
-    team2: { name: "Chelsea", logo: "https://upload.wikimedia.org/wikipedia/en/cc/Chelsea_FC.svg" }
-  },
-  {
-    id: "match-2",
-    league: "UEFA Champions League",
-    status: "HARI INI",
-    time: "21:00 WIB",
-    isLive: false,
-    team1: { name: "Real Madrid", logo: "https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" },
-    team2: { name: "Barcelona", logo: "https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona.svg" }
-  },
-  {
-    id: "match-3",
-    league: "Serie A",
-    status: "BESOK",
-    time: "02:45 WIB",
-    isLive: false,
-    team1: { name: "Juventus", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Juventus_FC_2017_icon_%28black%29.svg" },
-    team2: { name: "AC Milan", logo: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg" }
-  },
-  {
-    id: "match-4",
-    league: "La Liga",
-    status: "HARI INI",
-    time: "23:30 WIB",
-    isLive: false,
-    team1: { name: "Atletico", logo: "https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg" },
-    team2: { name: "Sevilla", logo: "https://upload.wikimedia.org/wikipedia/en/3/3b/Sevilla_FC_logo.svg" }
-  }
-];
 
 /* MOCK UPCOMING MOVIES DATA */
 const MOCK_UPCOMING_MOVIES = [
@@ -117,7 +78,7 @@ const MOCK_UPCOMING_MOVIES = [
   }
 ];
 
-class LK21API {
+class RstreamAPI {
   async _fetch(endpoint, params = {}) {
     try {
       const url = new URL(`${TMDB_BASE}${endpoint}`);
@@ -245,7 +206,7 @@ class LK21API {
 }
 
 /* APP STATE CONTROLLER */
-const api = new LK21API();
+const api = new RstreamAPI();
 
 let state = {
   trending: [],
@@ -259,8 +220,8 @@ let state = {
   activeServer: "vidsrc",
   activeSeason: 1,
   activeEpisode: 1,
-  searchHistory: JSON.parse(localStorage.getItem("lk21_search_history") || '["Avatar 3", "Squid Game 2", "Demon Slayer", "Siksa Kubur"]'),
-  favorites: JSON.parse(localStorage.getItem("lk21_favorites") || "[]"),
+  searchHistory: JSON.parse(localStorage.getItem("rstream_search_history") || '["Avatar 3", "Squid Game 2", "Demon Slayer", "Siksa Kubur"]'),
+  favorites: JSON.parse(localStorage.getItem("rstream_favorites") || "[]"),
   upcomingList: MOCK_UPCOMING_MOVIES
 };
 
@@ -284,7 +245,6 @@ const el = {
   heroIndicators: document.getElementById("heroIndicators"),
 
   recommendedScrollList: document.getElementById("recommendedScrollList"),
-  footballMatchList: document.getElementById("footballMatchList"),
   rankingTabs: document.getElementById("rankingTabs"),
   rankingScrollList: document.getElementById("rankingScrollList"),
   upcomingScrollList: document.getElementById("upcomingScrollList"),
@@ -305,7 +265,6 @@ const el = {
   detailModal: document.getElementById("detailModal"),
   btnDetailBack: document.getElementById("btnDetailBack"),
   btnDetailFav: document.getElementById("btnDetailFav"),
-  btnDetailShare: document.getElementById("btnDetailShare"),
   detailBackdropImg: document.getElementById("detailBackdropImg"),
   btnDetailPlayCover: document.getElementById("btnDetailPlayCover"),
   detailInlinePlayer: document.getElementById("detailInlinePlayer"),
@@ -322,10 +281,7 @@ const el = {
   detailSeasonSelect: document.getElementById("detailSeasonSelect"),
   detailEpisodeList: document.getElementById("detailEpisodeList"),
   detailRecommendationsList: document.getElementById("detailRecommendationsList"),
-  btnFloatingDownload: document.getElementById("btnFloatingDownload"),
   btnAddToList: document.getElementById("btnAddToList"),
-  btnShareDetail: document.getElementById("btnShareDetail"),
-  btnDownloadDetail: document.getElementById("btnDownloadDetail"),
   btnPostComment: document.getElementById("btnPostComment"),
   commentInput: document.getElementById("commentInput"),
   commentsList: document.getElementById("commentsList"),
@@ -354,7 +310,6 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initApp() {
   setupEventListeners();
   renderSearchHistory();
-  renderFootballMatches();
   renderUpcomingMovies();
 
   try {
@@ -385,6 +340,7 @@ async function initApp() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
+  // Bottom Navigation
   el.navTabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const targetView = btn.dataset.view;
@@ -392,15 +348,21 @@ function setupEventListeners() {
     });
   });
 
+  // Top Search Input Focus/Click -> Auto Redirect to Search View directly
+  el.topSearchInput.addEventListener("focus", () => {
+    switchView("viewSearch");
+    if (el.pageSearchInput) el.pageSearchInput.focus();
+  });
+
   el.btnTopSearchSubmit.addEventListener("click", () => {
     const q = el.topSearchInput.value.trim();
-    if (q) performSearch(q);
+    performSearch(q || "Trending");
   });
 
   el.topSearchInput.addEventListener("keyup", (e) => {
     if (e.key === "Enter") {
       const q = el.topSearchInput.value.trim();
-      if (q) performSearch(q);
+      performSearch(q || "Trending");
     }
   });
 
@@ -427,7 +389,6 @@ function setupEventListeners() {
     card.addEventListener("click", () => {
       const genre = card.dataset.genre;
       showToast(`Membuka Kategori ${genre.toUpperCase()}`);
-      switchView("viewSearch");
       performSearch(genre === "kdrama" ? "Korean" : genre === "indo" ? "Indonesia" : "Action");
     });
   });
@@ -445,7 +406,7 @@ function setupEventListeners() {
   if (el.btnClearHistory) {
     el.btnClearHistory.addEventListener("click", () => {
       state.searchHistory = [];
-      localStorage.setItem("lk21_search_history", JSON.stringify([]));
+      localStorage.setItem("rstream_search_history", JSON.stringify([]));
       renderSearchHistory();
       showToast("Riwayat pencarian dihapus.");
     });
@@ -460,25 +421,11 @@ function setupEventListeners() {
 
   el.btnDetailBack.addEventListener("click", closeDetailModal);
   el.btnDetailPlayCover.addEventListener("click", startInlinePlayer);
-  el.btnFloatingDownload.addEventListener("click", handleDownloadAction);
-  el.btnDownloadDetail.addEventListener("click", handleDownloadAction);
 
   el.btnAddToList.addEventListener("click", () => {
     if (!state.currentDetail) return;
     const isFav = toggleFavorite(state.currentDetail);
     showToast(isFav ? "Ditambahkan ke Daftar Saya" : "Dihapus dari Daftar Saya");
-  });
-
-  el.btnShareDetail.addEventListener("click", () => {
-    if (navigator.share) {
-      navigator.share({
-        title: state.currentDetail?.title || "LK21 Stream",
-        text: `Nonton film ${state.currentDetail?.title} gratis sub Indo di LK21 Stream!`,
-        url: window.location.href
-      }).catch(() => {});
-    } else {
-      showToast("Link film berhasil disalin ke clipboard");
-    }
   });
 
   el.btnPostComment.addEventListener("click", () => {
@@ -497,6 +444,7 @@ function setupEventListeners() {
     showToast("Komentar terposting!");
   });
 
+  // Server selection (SERVER 1, SERVER 2, etc.)
   el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(p => p.classList.remove("active"));
@@ -531,7 +479,6 @@ async function loadDeviceSpecifications() {
   const ua = navigator.userAgent;
   el.specUserAgent.textContent = ua;
 
-  // Brand & Model Detection
   let brand = "Android Smartphone";
   if (ua.includes("Samsung") || ua.includes("SM-")) brand = "Samsung Galaxy";
   else if (ua.includes("Xiaomi") || ua.includes("Redmi") || ua.includes("POCO")) brand = "Xiaomi / POCO";
@@ -542,7 +489,6 @@ async function loadDeviceSpecifications() {
   else if (ua.includes("Pixel")) brand = "Google Pixel";
   el.specDeviceBrand.textContent = brand;
 
-  // OS Version
   let os = "Android OS";
   if (ua.includes("Android")) {
     const match = ua.match(/Android\s([0-9\.]+)/);
@@ -553,27 +499,22 @@ async function loadDeviceSpecifications() {
   }
   el.specOsVersion.textContent = os;
 
-  // Screen Specs
   const w = window.screen.width;
   const h = window.screen.height;
   const dpr = window.devicePixelRatio || 1.0;
   el.specScreenRes.textContent = `${w} x ${h} (${dpr}x DPR)`;
 
-  // Connection
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const connType = conn ? (conn.effectiveType ? conn.effectiveType.toUpperCase() : "Online") : (navigator.onLine ? "Online" : "Offline");
   el.specConnectionType.textContent = `${connType} ${navigator.onLine ? '(Connected)' : '(Offline)'}`;
 
-  // Memory & Cores
   el.specRam.textContent = navigator.deviceMemory ? `${navigator.deviceMemory} GB RAM` : "4 - 8 GB RAM";
   el.specCpuCores.textContent = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Core CPU` : "Octa-Core CPU";
 
-  // Timezone & Language
   const lang = navigator.language || "id-ID";
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Jakarta";
   el.specTimezone.textContent = `${lang} (${tz})`;
 
-  // Battery Status
   if (navigator.getBattery) {
     try {
       const b = await navigator.getBattery();
@@ -586,7 +527,6 @@ async function loadDeviceSpecifications() {
     el.specBattery.textContent = "Terhubung";
   }
 
-  // Fetch Public IP Address
   try {
     const res = await fetch("https://api.ipify.org?format=json");
     const data = await res.json();
@@ -666,35 +606,6 @@ function renderPosterCards(container, items) {
       openDetailModal(parseInt(card.dataset.id), card.dataset.type);
     });
   });
-}
-
-/* RENDER SEPAK BOLA LANGSUNG */
-function renderFootballMatches() {
-  if (!el.footballMatchList) return;
-  el.footballMatchList.innerHTML = MOCK_FOOTBALL_MATCHES.map(m => `
-    <div class="match-card">
-      <div class="match-status-row">
-        <span class="match-status-badge ${m.isLive ? 'live' : 'upcoming'}">
-          ${m.isLive ? '<span class="pulse-red"></span> ' : ''}${m.status} ${m.time}
-        </span>
-        <span class="match-league">${m.league}</span>
-      </div>
-      <div class="match-teams-vs">
-        <div class="team-box">
-          <img class="team-logo" src="${m.team1.logo}" alt="${m.team1.name}" />
-          <span class="team-name">${m.team1.name}</span>
-        </div>
-        <div class="vs-badge">VS</div>
-        <div class="team-box">
-          <img class="team-logo" src="${m.team2.logo}" alt="${m.team2.name}" />
-          <span class="team-name">${m.team2.name}</span>
-        </div>
-      </div>
-      <button class="btn-watch-match" onclick="showToast('Streaming ${m.team1.name} vs ${m.team2.name} Siap')">
-        <span>Nonton Live</span>
-      </button>
-    </div>
-  `).join("");
 }
 
 /* RENDER PERINGKAT FILM */
@@ -778,12 +689,12 @@ function renderSearchHistory() {
 async function performSearch(query) {
   if (!query) return;
   switchView("viewSearch");
-  el.pageSearchInput.value = query;
+  if (el.pageSearchInput) el.pageSearchInput.value = query;
 
   if (!state.searchHistory.includes(query)) {
     state.searchHistory.unshift(query);
     if (state.searchHistory.length > 8) state.searchHistory.pop();
-    localStorage.setItem("lk21_search_history", JSON.stringify(state.searchHistory));
+    localStorage.setItem("rstream_search_history", JSON.stringify(state.searchHistory));
     renderSearchHistory();
   }
 
@@ -922,17 +833,13 @@ function toggleFavorite(item) {
   const idx = state.favorites.findIndex(f => f.id === item.id);
   if (idx >= 0) {
     state.favorites.splice(idx, 1);
-    localStorage.setItem("lk21_favorites", JSON.stringify(state.favorites));
+    localStorage.setItem("rstream_favorites", JSON.stringify(state.favorites));
     return false;
   } else {
     state.favorites.push(item);
-    localStorage.setItem("lk21_favorites", JSON.stringify(state.favorites));
+    localStorage.setItem("rstream_favorites", JSON.stringify(state.favorites));
     return true;
   }
-}
-
-function handleDownloadAction() {
-  showToast("Unduhan dimulai! File akan disimpan secara offline.");
 }
 
 function showToast(msg) {
