@@ -42,6 +42,17 @@ const SERVERS = {
   }
 };
 
+/* SHUFFLE ARRAY HELPER */
+function shuffleArray(arr) {
+  if (!arr || !Array.isArray(arr)) return [];
+  const array = [...arr];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 class RstreamAPI {
   async _fetch(endpoint, params = {}) {
     try {
@@ -113,9 +124,10 @@ class RstreamAPI {
   }
 
   async trending() {
-    const data = await this._fetch("/trending/all/week");
-    if (!data?.results) return this._fallbackList();
-    return data.results
+    const page = Math.floor(Math.random() * 4) + 1; // Randomize TMDB page 1..4
+    const data = await this._fetch("/trending/all/week", { page });
+    if (!data?.results || data.results.length === 0) return shuffleArray(this._expandedFallbackList());
+    return shuffleArray(data.results
       .filter((r) => r.media_type === "movie" || r.media_type === "tv")
       .map((r) => ({
         id: r.id,
@@ -126,13 +138,14 @@ class RstreamAPI {
         poster: r.poster_path ? `${TMDB_IMG}${r.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
         backdrop: r.backdrop_path ? `${TMDB_IMG_ORIGINAL}${r.backdrop_path}` : null,
         overview: r.overview || "Trending film pilihan terpopuler minggu ini.",
-      }));
+      })));
   }
 
   async popularMovies() {
-    const data = await this._fetch("/movie/popular");
-    if (!data?.results) return this._fallbackList();
-    return data.results.map((r) => ({
+    const page = Math.floor(Math.random() * 5) + 1; // Randomize page 1..5
+    const data = await this._fetch("/movie/popular", { page });
+    if (!data?.results || data.results.length === 0) return shuffleArray(this._expandedFallbackList("movie"));
+    return shuffleArray(data.results.map((r) => ({
       id: r.id,
       title: r.title,
       type: "movie",
@@ -141,13 +154,14 @@ class RstreamAPI {
       poster: r.poster_path ? `${TMDB_IMG}${r.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
       backdrop: r.backdrop_path ? `${TMDB_IMG_ORIGINAL}${r.backdrop_path}` : null,
       overview: r.overview || "",
-    }));
+    })));
   }
 
   async popularTV() {
-    const data = await this._fetch("/tv/popular");
-    if (!data?.results) return this._fallbackList("tv");
-    return data.results.map((r) => ({
+    const page = Math.floor(Math.random() * 5) + 1; // Randomize page 1..5
+    const data = await this._fetch("/tv/popular", { page });
+    if (!data?.results || data.results.length === 0) return shuffleArray(this._expandedFallbackList("tv"));
+    return shuffleArray(data.results.map((r) => ({
       id: r.id,
       title: r.name,
       type: "tv",
@@ -156,16 +170,35 @@ class RstreamAPI {
       poster: r.poster_path ? `${TMDB_IMG}${r.poster_path}` : "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
       backdrop: r.backdrop_path ? `${TMDB_IMG_ORIGINAL}${r.backdrop_path}` : null,
       overview: r.overview || "",
-    }));
+    })));
   }
 
-  _fallbackList(type = "movie") {
-    return [
-      { id: 653346, title: "Kingdom of Planet Apes", type, year: "2026", rating: "8.7", poster: "https://image.tmdb.org/t/p/w500/gKkl37BQuKTanygYQG1pyYgLVgf.jpg" },
-      { id: 823464, title: "Godzilla x Kong", type, year: "2026", rating: "8.9", poster: "https://image.tmdb.org/t/p/w500/b0PlSFdDwbyK0cfOiBZaOfHQfeK.jpg" },
-      { id: 573435, title: "Bad Boys: Ride or Die", type, year: "2026", rating: "8.4", poster: "https://image.tmdb.org/t/p/w500/nP6RliHjxH2uUjYqMZioHovLgvu.jpg" },
-      { id: 1022789, title: "Inside Out 2", type, year: "2026", rating: "9.0", poster: "https://image.tmdb.org/t/p/w500/vpnP19zLqVGlOx1VoY8YeeOi9W5.jpg" }
+  _expandedFallbackList(type = "all") {
+    const list = [
+      { id: 653346, title: "Kingdom of Planet Apes", type: "movie", year: "2026", rating: "8.7", poster: "https://image.tmdb.org/t/p/w500/gKkl37BQuKTanygYQG1pyYgLVgf.jpg" },
+      { id: 823464, title: "Godzilla x Kong", type: "movie", year: "2026", rating: "8.9", poster: "https://image.tmdb.org/t/p/w500/b0PlSFdDwbyK0cfOiBZaOfHQfeK.jpg" },
+      { id: 573435, title: "Bad Boys: Ride or Die", type: "movie", year: "2026", rating: "8.4", poster: "https://image.tmdb.org/t/p/w500/nP6RliHjxH2uUjYqMZioHovLgvu.jpg" },
+      { id: 1022789, title: "Inside Out 2", type: "movie", year: "2026", rating: "9.0", poster: "https://image.tmdb.org/t/p/w500/vpnP19zLqVGlOx1VoY8YeeOi9W5.jpg" },
+      { id: 533535, title: "Deadpool & Wolverine", type: "movie", year: "2026", rating: "9.1", poster: "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" },
+      { id: 693134, title: "Dune: Part Two", type: "movie", year: "2026", rating: "8.8", poster: "https://image.tmdb.org/t/p/w500/1pdfLPoLMag8St8faOhvNUj9GlL.jpg" },
+      { id: 872585, title: "Oppenheimer", type: "movie", year: "2025", rating: "8.9", poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGvC2t78dG.jpg" },
+      { id: 933260, title: "The Substance", type: "movie", year: "2026", rating: "8.6", poster: "https://image.tmdb.org/t/p/w500/l117yeUdMGRIFF3QvY6fTsjKZYx.jpg" },
+      { id: 1184918, title: "The Wild Robot", type: "movie", year: "2026", rating: "8.7", poster: "https://image.tmdb.org/t/p/w500/v9L21IioP1uY9R91456uT1k31u4.jpg" },
+      { id: 912649, title: "Venom: The Last Dance", type: "movie", year: "2026", rating: "8.3", poster: "https://image.tmdb.org/t/p/w500/k221nm0wDTHSTm2wqLQ8rLg2WvF.jpg" },
+      { id: 93405, title: "Squid Game", type: "tv", year: "2026", rating: "8.9", poster: "https://image.tmdb.org/t/p/w500/dDlEmu3EZ0Pgg93K2SVNen3G82L.jpg" },
+      { id: 94605, title: "Arcane", type: "tv", year: "2026", rating: "9.2", poster: "https://image.tmdb.org/t/p/w500/fqld2yobYU2FODohw4A42uLIwwh.jpg" },
+      { id: 126308, title: "Shogun", type: "tv", year: "2026", rating: "8.8", poster: "https://image.tmdb.org/t/p/w500/7O4iVf26YScHaWFL9wFiYmBxMiK.jpg" },
+      { id: 1396, title: "Breaking Bad", type: "tv", year: "2024", rating: "9.5", poster: "https://image.tmdb.org/t/p/w500/ztSlKpyE2zL4YLxmL2oB207iSpP.jpg" },
+      { id: 92830, title: "Demon Slayer: Kimetsu no Yaiba", type: "tv", year: "2026", rating: "8.9", poster: "https://image.tmdb.org/t/p/w500/xUfVKlMSpfasLdF1j28BwPlbStb.jpg" },
+      { id: 114479, title: "Agatha All Along", type: "tv", year: "2026", rating: "8.4", poster: "https://image.tmdb.org/t/p/w500/p487LllQ25nNf7oGZzM2vLp1PjS.jpg" },
+      { id: 829280, title: "Enola Holmes 2", type: "movie", year: "2025", rating: "8.2", poster: "https://image.tmdb.org/t/p/w500/tegBawGEF7Xm2xDYTnhZ6w4fDqH.jpg" },
+      { id: 76341, title: "Mad Max: Fury Road", type: "movie", year: "2024", rating: "8.7", poster: "https://image.tmdb.org/t/p/w500/8tZYtuYiF9u0DjwW02eYvexV2h2.jpg" }
     ];
+    if (type !== "all") {
+      const filtered = list.filter(item => item.type === type);
+      return filtered.length > 0 ? filtered : list;
+    }
+    return list;
   }
 }
 
@@ -208,6 +241,7 @@ const el = {
   heroIndicators: document.getElementById("heroIndicators"),
 
   recommendedScrollList: document.getElementById("recommendedScrollList"),
+  btnRefreshHome: document.getElementById("btnRefreshHome"),
   rankingTabs: document.getElementById("rankingTabs"),
   rankingScrollList: document.getElementById("rankingScrollList"),
   categoryCardsGrid: document.getElementById("categoryCardsGrid"),
@@ -273,6 +307,13 @@ async function initApp() {
   setupEventListeners();
   renderSearchHistory();
 
+  await loadHomePageData();
+
+  // RESTORE MOVIE DETAIL & PLAYER IF RETURNED FROM EXTERNAL AD REDIRECT OR BACK BUTTON
+  restoreActivePlayerSession();
+}
+
+async function loadHomePageData() {
   try {
     const [trending, movies, tv] = await Promise.all([
       api.trending(),
@@ -294,10 +335,6 @@ async function initApp() {
       renderHeroBanner(0);
       startHeroCarousel();
     }
-
-    // RESTORE MOVIE DETAIL & PLAYER IF RETURNED FROM EXTERNAL AD REDIRECT OR BACK BUTTON
-    restoreActivePlayerSession();
-
   } catch (err) {
     console.error("App init error:", err);
   }
@@ -335,11 +372,19 @@ function restoreActivePlayerSession() {
 
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
+  // Refresh / Shuffle Movies Button
+  if (el.btnRefreshHome) {
+    el.btnRefreshHome.addEventListener("click", async (e) => {
+      e.preventDefault();
+      showToast("Memuat daftar film baru...");
+      await loadHomePageData();
+    });
+  }
+
   // Handle Browser PopState / Hardware Back Button
   window.addEventListener("popstate", (e) => {
     const savedSession = sessionStorage.getItem("rstream_active_detail");
     if (savedSession) {
-      // User pressed BACK from an external redirect / ad page back into app:
       restoreActivePlayerSession();
     } else if (!el.detailModal.classList.contains("hidden")) {
       closeDetailModal();
@@ -398,9 +443,9 @@ function setupEventListeners() {
       pill.classList.add("active");
       const cat = pill.dataset.cat;
       showToast(`Kategori: ${pill.textContent}`);
-      if (cat === "movie") renderPosterCards(el.recommendedScrollList, state.popularMovies);
-      else if (cat === "series" || cat === "tv") renderPosterCards(el.recommendedScrollList, state.popularTV);
-      else renderPosterCards(el.recommendedScrollList, state.trending);
+      if (cat === "movie") renderPosterCards(el.recommendedScrollList, shuffleArray(state.popularMovies));
+      else if (cat === "series" || cat === "tv") renderPosterCards(el.recommendedScrollList, shuffleArray(state.popularTV));
+      else renderPosterCards(el.recommendedScrollList, shuffleArray(state.trending));
     });
   });
 
@@ -768,7 +813,7 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
     el.detailTvControls.classList.add("hidden");
   }
 
-  renderPosterCards(el.detailRecommendationsList, state.trending.slice(2, 8));
+  renderPosterCards(el.detailRecommendationsList, shuffleArray(state.trending).slice(0, 6));
 
   el.detailModal.classList.remove("hidden");
   document.body.style.overflow = "hidden";
