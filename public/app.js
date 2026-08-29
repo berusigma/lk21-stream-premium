@@ -294,13 +294,71 @@ async function initApp() {
       renderHeroBanner(0);
       startHeroCarousel();
     }
+
+    // RESTORE MOVIE DETAIL & PLAYER IF RETURNED FROM EXTERNAL AD REDIRECT OR BACK BUTTON
+    restoreActivePlayerSession();
+
   } catch (err) {
     console.error("App init error:", err);
   }
 }
 
+/* RESTORE ACTIVE STREAM SESSION AFTER RETURN FROM AD REDIRECT */
+function restoreActivePlayerSession() {
+  const savedSession = sessionStorage.getItem("rstream_active_detail");
+  const hash = window.location.hash;
+  
+  let targetId = null;
+  let targetType = "movie";
+  let autoPlay = true;
+
+  if (savedSession) {
+    try {
+      const data = JSON.parse(savedSession);
+      targetId = data.id;
+      targetType = data.type || "movie";
+      autoPlay = data.autoPlay !== undefined ? data.autoPlay : true;
+      if (data.server) state.activeServer = data.server;
+      if (data.season) state.activeSeason = data.season;
+      if (data.episode) state.activeEpisode = data.episode;
+    } catch (e) {
+      console.warn("Invalid session data:", e);
+    }
+  } else if (hash.startsWith("#detail-")) {
+    targetId = parseInt(hash.replace("#detail-", ""));
+  }
+
+  if (targetId) {
+    openDetailModal(targetId, targetType, autoPlay);
+  }
+}
+
 /* EVENT LISTENERS SETUP */
 function setupEventListeners() {
+  // Handle Browser PopState / Hardware Back Button
+  window.addEventListener("popstate", (e) => {
+    const savedSession = sessionStorage.getItem("rstream_active_detail");
+    if (savedSession) {
+      // User pressed BACK from an external redirect / ad page back into app:
+      restoreActivePlayerSession();
+    } else if (!el.detailModal.classList.contains("hidden")) {
+      closeDetailModal();
+    }
+  });
+
+  // Native Capacitor App Hardware Back Button Listener
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+    window.Capacitor.Plugins.App.addListener('backButton', () => {
+      if (!el.detailModal.classList.contains("hidden")) {
+        closeDetailModal();
+      } else if (state.activeView !== "viewBeranda") {
+        switchView("viewBeranda");
+      } else {
+        window.Capacitor.Plugins.App.exitApp();
+      }
+    });
+  }
+
   // Bottom Navigation
   el.navTabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -411,6 +469,7 @@ function setupEventListeners() {
       el.sourcePillsWrap.querySelectorAll(".source-pill").forEach(p => p.classList.remove("active"));
       pill.classList.add("active");
       state.activeServer = pill.dataset.server;
+      saveActivePlayerSession();
       showToast(`Server diganti ke ${pill.textContent}`);
       if (!el.detailInlinePlayer.classList.contains("hidden")) {
         startInlinePlayer();
@@ -665,6 +724,21 @@ function renderVerticalSearchResults(items) {
   });
 }
 
+/* SAVE & PERSIST ACTIVE PLAYER SESSION STATE */
+function saveActivePlayerSession() {
+  if (!state.currentDetail) return;
+  const sessionData = {
+    id: state.currentDetail.id,
+    type: state.currentDetail.type,
+    autoPlay: !el.detailInlinePlayer.classList.contains("hidden"),
+    server: state.activeServer,
+    season: state.activeSeason,
+    episode: state.activeEpisode
+  };
+  sessionStorage.setItem("rstream_active_detail", JSON.stringify(sessionData));
+  history.replaceState({ modal: "detail", id: state.currentDetail.id }, "", `#detail-${state.currentDetail.id}`);
+}
+
 /* MOVIE DETAIL MODAL & INLINE STREAM PLAYER */
 async function openDetailModal(id, type = "movie", autoPlay = false) {
   showToast("Memuat detail film...");
@@ -699,15 +773,23 @@ async function openDetailModal(id, type = "movie", autoPlay = false) {
   el.detailModal.classList.remove("hidden");
   document.body.style.overflow = "hidden";
 
+  saveActivePlayerSession();
+
   if (autoPlay) {
     startInlinePlayer();
   }
 }
 
 function closeDetailModal() {
+  sessionStorage.removeItem("rstream_active_detail");
+  if (window.location.hash.startsWith("#detail-")) {
+    history.pushState("", document.title, window.location.pathname + window.location.search);
+  }
+
   el.detailModal.classList.add("hidden");
   document.body.style.overflow = "";
   el.detailInlinePlayer.src = "";
+  state.currentDetail = null;
 }
 
 function startInlinePlayer() {
@@ -721,6 +803,7 @@ function startInlinePlayer() {
   el.detailInlinePlayer.src = streamUrl;
   el.detailInlinePlayer.classList.remove("hidden");
   el.btnDetailPlayCover.classList.add("hidden");
+  saveActivePlayerSession();
   showToast(`Memutar stream: ${title}`);
 }
 
@@ -730,11 +813,16 @@ function setupTvEpisodeControls(detail) {
     .map(s => `<option value="${s}">Season ${s}</option>`)
     .join("");
 
+  if (state.activeSeason) {
+    el.detailSeasonSelect.value = state.activeSeason;
+  }
+
   renderTvEpisodes(10);
 
   el.detailSeasonSelect.onchange = (e) => {
     state.activeSeason = parseInt(e.target.value);
     state.activeEpisode = 1;
+    saveActivePlayerSession();
     renderTvEpisodes(10);
   };
 }
@@ -750,6 +838,7 @@ function renderTvEpisodes(count) {
       state.activeEpisode = parseInt(btn.dataset.ep);
       el.detailEpisodeList.querySelectorAll(".ep-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
+      saveActivePlayerSession();
       showToast(`Memutar Season ${state.activeSeason} Episode ${state.activeEpisode}`);
       if (!el.detailInlinePlayer.classList.contains("hidden")) {
         startInlinePlayer();
