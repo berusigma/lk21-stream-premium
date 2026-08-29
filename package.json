@@ -10,7 +10,14 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"
   },
-  "keywords": ["capacitor", "android", "ios", "windows", "tauri", "template"],
+  "keywords": [
+    "capacitor",
+    "android",
+    "ios",
+    "windows",
+    "tauri",
+    "template"
+  ],
   "author": "berusigma",
   "license": "MIT",
   "type": "module",
@@ -27,6 +34,7 @@
     "@capacitor/share": "^7.0.4"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.11.4"
+    "@tauri-apps/cli": "^2.11.4",
+    "jimp": "^1.6.1"
   }
 }
