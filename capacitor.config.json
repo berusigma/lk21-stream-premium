@@ -2,6 +2,12 @@
   "appId": "com.rstream.app",
   "appName": "RSTREAM",
   "webDir": "public",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": [
+      "*"
+    ]
+  },
   "plugins": {
     "CapacitorHttp": {
       "enabled": true

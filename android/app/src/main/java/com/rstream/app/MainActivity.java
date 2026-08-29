@@ -1,4 +1,4 @@
-package com.mysimplestart.app;
+package com.rstream.app;
 
 import com.getcapacitor.BridgeActivity;
 
