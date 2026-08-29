@@ -3,9 +3,14 @@ name: RSTREAM Multi-Platform Build Pipeline
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   # ==========================================
@@ -120,3 +125,101 @@ jobs:
         with:
           name: RSTREAM-Web-Bundle
           path: public/
+
+  # ==========================================
+  # 4. PUBLISH GITHUB RELEASE
+  # ==========================================
+  publish-release:
+    name: 🚀 Create / Update GitHub Release
+    needs: [build-android, build-ios, build-web]
+    if: always() && !cancelled() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 📥 Download Android APK Artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: RSTREAM-Android-APK
+          path: release-assets/android
+
+      - name: 📥 Download iOS IPA Artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: RSTREAM-iOS-IPA
+          path: release-assets/ios
+
+      - name: 📥 Download Web Bundle Artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: RSTREAM-Web-Bundle
+          path: release-assets/web
+
+      - name: 📦 Package Assets for Release
+        run: |
+          mkdir -p assets_to_upload
+
+          # Copy Android APK if present
+          if [ -d "release-assets/android" ]; then
+            find release-assets/android -name "*.apk" -exec cp {} assets_to_upload/RSTREAM-Android.apk \;
+          fi
+
+          # Copy iOS IPA if present
+          if [ -d "release-assets/ios" ]; then
+            find release-assets/ios -name "*.ipa" -exec cp {} assets_to_upload/RSTREAM-iOS.ipa \;
+          fi
+
+          # Zip Web bundle if present
+          if [ -d "release-assets/web" ]; then
+            cd release-assets/web
+            zip -r ../../assets_to_upload/RSTREAM-Web-Bundle.zip .
+            cd ../..
+          fi
+
+          echo "Prepared assets for GitHub Release:"
+          ls -la assets_to_upload/
+
+          if [ -z "$(ls -A assets_to_upload/ 2>/dev/null)" ]; then
+            echo "Error: No release assets were found to publish!"
+            exit 1
+          fi
+
+      - name: 🏷️ Determine Release Tag
+        id: tag
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_NAME=v1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🚀 Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG_NAME }}
+          name: "RSTREAM Release ${{ steps.tag.outputs.TAG_NAME }}"
+          body: |
+            ## 🎬 RSTREAM Latest Release (${{ steps.tag.outputs.TAG_NAME }})
+
+            Berikut adalah hasil build otomatis terbaru untuk aplikasi **RSTREAM** (lk21-stream-premium).
+
+            ### 📦 Download Assets
+            - 📱 **Android APK**: `RSTREAM-Android.apk`
+            - 🍎 **iOS IPA**: `RSTREAM-iOS.ipa`
+            - 🌐 **Web Bundle**: `RSTREAM-Web-Bundle.zip`
+
+            ---
+            *Dipublikasikan secara otomatis melalui GitHub Actions Workflow (Run #${{ github.run_number }}) dari commit `${{ github.sha }}`.*
+          files: assets_to_upload/*
+          draft: false
+          prerelease: false
+          make_latest: "true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
